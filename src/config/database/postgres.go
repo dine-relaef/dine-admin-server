@@ -4,7 +4,6 @@ import (
 	"log"
 	models "menu-server/src/models" // replace with the actual path to your users package
 	"os"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

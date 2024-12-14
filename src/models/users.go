@@ -2,10 +2,9 @@ package models
 
 import (
 	"time"
-
-	"github.com/gofrs/uuid"
+	"github.com/gofrs/uuid"	
 	// uuid "github.com/jackc/pgx/pgtype/ext/gofrs-uuid"
-	"gorm.io/gorm"
+	// "gorm.io/gorm"
 )
 
 type User struct {
@@ -18,9 +17,4 @@ type User struct {
 	Restaurants []Restaurant `gorm:"foreignKey:AdminID" json:"restaurants"`
 	CreatedAt   time.Time    `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt   time.Time    `gorm:"autoUpdateTime" json:"updated_at"`
-}
-
-func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
-	u.ID, err = uuid.NewV4()
-	return err
 }
