@@ -11,21 +11,11 @@ import (
 
 // CreateMenu handles the creation of a new menu
 func CreateMenu(c *gin.Context) {
-	restaurantIdParam := c.Param("restaurant_id")
-
-	restaurantID, err := uuid.FromString(restaurantIdParam)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid category ID format"})
-        return
-    }
-
 	var menu models.Menu
 	if err := c.ShouldBindJSON(&menu); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	menu.RestaurantID = restaurantID
 
 	var existingMenu models.Menu
     if err := postgres.DB.Where("name = ? AND restaurant_id = ?", menu.Name, menu.RestaurantID).First(&existingMenu).Error; err == nil {
@@ -46,7 +36,7 @@ func CreateMenu(c *gin.Context) {
 
 // GetMenus retrieves all menus
 func GetMenus(c *gin.Context) {
-	restaurantIdParam := c.Param("restaurant_id")
+	restaurantIdParam := c.Query("restaurant_id")
 	restaurantID, err := uuid.FromString(restaurantIdParam)
     if err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid category ID format"})
@@ -59,7 +49,7 @@ func GetMenus(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message" : "Menu Found", "menus": menus})
+	c.JSON(http.StatusOK, gin.H{"message" : "Menus Found Successfully", "menus": menus})
 }
 
 // GetMenuByID retrieves a specific menu by ID
@@ -72,7 +62,7 @@ func GetMenuByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"menu": menu})
+	c.JSON(http.StatusOK, gin.H{"message" : "Menu Got Successfully", "menu": menu})
 }
 
 // UpdateMenu updates a specific menu by ID
@@ -95,7 +85,7 @@ func UpdateMenu(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"menu": menu})
+	c.JSON(http.StatusOK, gin.H{"message" : "Menu Updated Successfully", "menu": menu})
 }
 
 // DeleteMenu deletes a specific menu by ID
@@ -111,20 +101,11 @@ func DeleteMenu(c *gin.Context) {
 
 // CreateMenuCategory handles the creation of a new menu category
 func CreateMenuCategory(c *gin.Context) {
-	menuIdParam := c.Param("menu_id")
-	menuID, err := uuid.FromString(menuIdParam)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid menu ID format"})
-        return
-    }
-
 	var category models.MenuCategory
 	if err := c.ShouldBindJSON(&category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	category.MenuID = menuID
 
 	var existingCategory models.MenuCategory
     if err := postgres.DB.Where("name = ? AND menu = ?", category.Name, category.MenuID).First(&existingCategory).Error; err == nil {
@@ -144,37 +125,36 @@ func CreateMenuCategory(c *gin.Context) {
 
 // GetMenuCategories retrieves all categories for a specific menu
 func GetMenuCategories(c *gin.Context) {
-	menuID := c.Param("menu_id")
+	menuID := c.Query("menu_id")
+
 	var categories []models.MenuCategory
 	if err := postgres.DB.Where("menu_id = ?", menuID).Find(&categories).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch categories"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"categories": categories})
+	c.JSON(http.StatusOK, gin.H{"message" : "Categories Found Successfully", "categories": categories})
 }
 
 // GetMenuCategoryByID retrieves a specific menu category by ID
 func GetMenuCategoryByID(c *gin.Context) {
-	menuID := c.Param("menu_id")
 	categoryID := c.Param("category_id")
 	var category models.MenuCategory
 
-	if err := postgres.DB.First(&category, "menu_id = ? AND id = ?", menuID, categoryID).Error; err != nil {
+	if err := postgres.DB.First(&category, "id = ?", categoryID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"category": category})
+	c.JSON(http.StatusOK, gin.H{"message" : "Category Found Successfully", "category": category})
 }
 
 // UpdateMenuCategory updates a specific menu category by ID
 func UpdateMenuCategory(c *gin.Context) {
-	menuID := c.Param("menu_id")
 	categoryID := c.Param("category_id")
 	var category models.MenuCategory
 
-	if err := postgres.DB.First(&category, "menu_id = ? AND id = ?", menuID, categoryID).Error; err != nil {
+	if err := postgres.DB.First(&category, "id = ?", categoryID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
 		return
 	}
@@ -189,14 +169,13 @@ func UpdateMenuCategory(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"category": category})
+	c.JSON(http.StatusOK, gin.H{"message" : "Category Updated Successfully", "category": category})
 }
 
 // DeleteMenuCategory deletes a specific menu category by ID
 func DeleteMenuCategory(c *gin.Context) {
-	menuID := c.Param("menu_id")
 	categoryID := c.Param("category_id")
-	if err := postgres.DB.Delete(&models.MenuCategory{}, "menu_id = ? AND id = ?", menuID, categoryID).Error; err != nil {
+	if err := postgres.DB.Delete(&models.MenuCategory{}, "id = ?", categoryID).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete category"})
 		return
 	}
@@ -206,21 +185,11 @@ func DeleteMenuCategory(c *gin.Context) {
 
 // CreateMenuItem handles the creation of a new menu item
 func CreateMenuItem(c *gin.Context) {
-    categoryIDParam := c.Param("category_id")
-
-    categoryID, err := uuid.FromString(categoryIDParam)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid category ID format"})
-        return
-    }
-
     var item models.MenuItem
     if err := c.ShouldBindJSON(&item); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
-
-    item.MenuCategoryID = categoryID
 
 	var existingItem models.MenuItem
 
@@ -240,7 +209,7 @@ func CreateMenuItem(c *gin.Context) {
 
 // GetMenuItems retrieves all items for a specific category
 func GetMenuItems(c *gin.Context) {
-	categoryID := c.Param("category_id")
+	categoryID := c.Query("category_id")
 
 	var items []models.MenuItem
 
@@ -249,30 +218,28 @@ func GetMenuItems(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"items": items})
+	c.JSON(http.StatusOK, gin.H{"message" : "Items Found Successfully", "items": items})
 }
 
 // GetMenuItemByID retrieves a specific menu item by ID
 func GetMenuItemByID(c *gin.Context) {
-	categoryID := c.Param("category_id")
 	itemID := c.Param("item_id")
 	var item models.MenuItem
 
-	if err := postgres.DB.First(&item, "menu_category_id = ? AND id = ?", categoryID, itemID).Error; err != nil {
+	if err := postgres.DB.First(&item, "id = ?", itemID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"item": item})
+	c.JSON(http.StatusOK, gin.H{"message" : "Item Got Successfully", "item": item})
 }
 
 // UpdateMenuItem updates a specific menu item by ID
 func UpdateMenuItem(c *gin.Context) {
-	categoryID := c.Param("category_id")
 	itemID := c.Param("item_id")
 	var item models.MenuItem
 
-	if err := postgres.DB.First(&item, "menu_category_id = ? AND id = ?", categoryID, itemID).Error; err != nil {
+	if err := postgres.DB.First(&item, "id = ?", itemID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
 		return
 	}
@@ -287,14 +254,13 @@ func UpdateMenuItem(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"item": item})
+	c.JSON(http.StatusOK, gin.H{"message" : "Item Updated Successfully", "item": item})
 }
 
 // DeleteMenuItem deletes a specific menu item by ID
 func DeleteMenuItem(c *gin.Context) {
-	categoryID := c.Param("category_id")
 	itemID := c.Param("item_id")
-	if err := postgres.DB.Delete(&models.MenuItem{}, "menu_category_id = ? AND id = ?", categoryID, itemID).Error; err != nil {
+	if err := postgres.DB.Delete(&models.MenuItem{}, "id = ?", itemID).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete item"})
 		return
 	}
