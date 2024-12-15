@@ -61,3 +61,4 @@ func V1Routes(r *gin.Engine) {
 	routes.SetupOrderRoutes(v1.Group("/orders"))
 	routes.SetupMenuRoutes(v1.Group("/menus"))
 }
+
