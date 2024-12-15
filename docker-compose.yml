@@ -11,7 +11,10 @@ services:
     depends_on:
       - postgres
     environment:
-      - DATABASE_URL=postgres://user:password@postgres:5432/yourdb?sslmode=disable
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable 
+      - PORT=${PORT}
+      - APP_NAME=${APP_NAME}
+      - ENVIRONMENT=${ENVIRONMENT}
 
   postgres:
     image: postgres:15-alpine
@@ -19,11 +22,12 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./migrations:/docker-entrypoint-initdb.d
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=yourdb
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
 
 volumes:
   postgres-data:
