@@ -5,7 +5,6 @@ import (
 	postgres "menu-server/src/config/database"
 	"menu-server/src/config/env"
 	routes "menu-server/src/routes/v1"
-
 	"github.com/gin-gonic/gin"
 )
 
