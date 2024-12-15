@@ -2,8 +2,9 @@ package postgres
 
 import (
 	"log"
+	"menu-server/src/config/env"
 	models "menu-server/src/models" // replace with the actual path to your users package
-	"os"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -24,7 +25,7 @@ func InitDB() {
 	var err error
 
 	// Read the DATABASE_URL environment variable
-	dsn := os.Getenv("DATABASE_URL")
+	dsn := env.PostgresDatabaseVar["DATABASE_URL"]
 	if dsn == "" {
 		log.Fatal("DATABASE_URL environment variable is not set")
 	}

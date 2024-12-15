@@ -1,18 +1,18 @@
 package routes
 
 import (
-	controllers "menu-server/src/controllers/v1"
+	middleware "menu-server/src/api/v1/middleware"
+	services "menu-server/src/api/v1/services"
+
 	"github.com/gin-gonic/gin"
-	middleware "menu-server/src/api/v1"
 )
 
-func SetupPlanRoutes(router *gin.Engine) {
-	PlanGroup := router.Group("/plans")
-	{
-		PlanGroup.POST("/", middleware.RoleMiddleware("admin"), controllers.CreatePlan)
-		PlanGroup.GET("/", controllers.GetPlans)
-		PlanGroup.GET("/:id", controllers.GetPlanByID)
-		PlanGroup.PUT("/:id", middleware.RoleMiddleware("admin"), controllers.UpdatePlan)
-		PlanGroup.DELETE("/:id", middleware.RoleMiddleware("admin"), controllers.DeletePlan)
-	}
+func SetupPlanRoutes(PlanGroup *gin.RouterGroup) {
+
+	PlanGroup.POST("/", middleware.RoleMiddleware("admin"), services.CreatePlan)
+	PlanGroup.GET("/", services.GetPlans)
+	PlanGroup.GET("/:id", services.GetPlanByID)
+	PlanGroup.PUT("/:id", middleware.RoleMiddleware("admin"), services.UpdatePlan)
+	PlanGroup.DELETE("/:id", middleware.RoleMiddleware("admin"), services.DeletePlan)
+
 }

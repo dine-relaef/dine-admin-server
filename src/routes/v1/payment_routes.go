@@ -1,18 +1,17 @@
 package routes
 
 import (
-	controllers "menu-server/src/controllers/v1"
+	services "menu-server/src/api/v1/services"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SetupPaymentRoutes(router *gin.Engine) {
-	PaymentGroup := router.Group("/payments")
-	{
-		PaymentGroup.POST("/", controllers.CreatePayment)
-		PaymentGroup.GET("/", controllers.GetPayments)
-		PaymentGroup.GET("/:id", controllers.GetPaymentByID)
-		PaymentGroup.PUT("/:id", controllers.UpdatePayment)
-		// PaymentGroup.DELETE("/:id", controllers.DeletePayment)
-	}
+func SetupPaymentRoutes(PaymentGroup *gin.RouterGroup) {
+
+	PaymentGroup.POST("/", services.CreatePayment)
+	PaymentGroup.GET("/", services.GetPayments)
+	PaymentGroup.GET("/:id", services.GetPaymentByID)
+	PaymentGroup.PUT("/:id", services.UpdatePayment)
+	// PaymentGroup.DELETE("/:id", services.DeletePayment)
+
 }
