@@ -9,5 +9,6 @@ import (
 func SetupAuthRoutes(authGroup *gin.RouterGroup) {
 
 	authGroup.POST("/register", services.RegisterUser)
+	authGroup.POST("/login", services.LoginUser)
 
 }

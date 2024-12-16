@@ -20,13 +20,6 @@ type User struct {
 	UpdatedAt   time.Time    `gorm:"autoUpdateTime" json:"updated_at"`
 }
 
-type CreateUserData struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Phone    string `json:"phone"`
-}
-
 type UpdateUserData struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`

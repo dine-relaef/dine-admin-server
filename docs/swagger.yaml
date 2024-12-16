@@ -6,7 +6,14 @@ definitions:
       status:
         type: string
     type: object
-  models.CreateUserData:
+  models.LoginUserData:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.RegisterUserData:
     properties:
       email:
         type: string
@@ -35,6 +42,24 @@ paths:
       summary: Health check endpoint
       tags:
       - Health
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login a user in the system
+      parameters:
+      - description: User credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginUserData'
+      produces:
+      - application/json
+      responses: {}
+      summary: Login a user
+      tags:
+      - Auth
   /api/v1/auth/register:
     post:
       consumes:
@@ -46,7 +71,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.CreateUserData'
+          $ref: '#/definitions/models.RegisterUserData'
       produces:
       - application/json
       responses: {}

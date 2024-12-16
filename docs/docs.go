@@ -38,6 +38,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/auth/login": {
+            "post": {
+                "description": "Login a user in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login a user",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginUserData"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/api/v1/auth/register": {
             "post": {
                 "description": "Create a new user in the system",
@@ -58,7 +85,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CreateUserData"
+                            "$ref": "#/definitions/models.RegisterUserData"
                         }
                     }
                 ],
@@ -104,7 +131,18 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CreateUserData": {
+        "models.LoginUserData": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RegisterUserData": {
             "type": "object",
             "properties": {
                 "email": {
