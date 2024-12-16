@@ -3,7 +3,7 @@ FROM golang:1.23.4-alpine
 # Install git and air for hot reloading
 RUN apk add --no-cache git
 RUN go install github.com/air-verse/air@latest
-
+RUN go install github.com/swaggo/swag/cmd/swag@latest
 # Set working directory
 WORKDIR /app
 

@@ -3,19 +3,19 @@ tmp_dir = "tmp"
 
 [build]
   bin = "tmp/main"
-  cmd = "go build -o ./tmp/main ./src/main.go"
-  delay = 1000
-  exclude_dir = ["assets", "tmp", "vendor"]
+  cmd = "swag init --parseDependency --parseInternal --dir ./src && go build -o ./tmp/main ./src/main.go "
+  delay = 1000 # Delay in milliseconds (1 second) between builds
+  exclude_dir = ["assets", "tmp", "vendor"] # Ignoring directories that don't need watching
   exclude_file = []
   exclude_regex = []
   follow_symlink = false
-  full_bin = ""
-  include_dir = []
-  include_ext = ["go"]
-  kill_delay = "0s"
+  full_bin = "" # Empty, meaning it'll use the default `bin`
+  include_dir = ["src"] # Limit to the source directory to avoid infinite looping
+  include_ext = ["go"] # Watch only Go files for changes
+  kill_delay = "1s" # Provide a small kill delay for smoother termination
   log = "build-errors.log"
-  send_interrupt = false
-  stop_on_error = true
+  send_interrupt = true # Use interrupt signals for graceful stops
+  stop_on_error = true # Stop build process if an error occurs
 
 [color]
   app = ""

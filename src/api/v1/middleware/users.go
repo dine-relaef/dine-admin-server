@@ -20,6 +20,7 @@ func RoleMiddleware(requiredRole string) gin.HandlerFunc {
 		var user models.User
 		if err := postgres.DB.First(&user, "id = ?", userID).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			c.Abort()
 			return
 		}
 
@@ -30,9 +31,11 @@ func RoleMiddleware(requiredRole string) gin.HandlerFunc {
 			return
 		}
 
-		// Add user_id and role to context for further use
 		c.Set("user_id", userID)
 		c.Set("role", user.Role)
 		c.Next()
+
+		// Add user_id and role to context for further use
+		
 	}
 }

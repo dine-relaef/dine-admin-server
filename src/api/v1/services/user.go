@@ -1,3 +1,4 @@
+// src/api/v1/services/user.go
 package services
 
 import (
@@ -6,50 +7,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gofrs/uuid"
 )
 
-// CreateUser handles the creation of a new user
-func CreateUser(c *gin.Context) {
-	var user models.User
-
-	// Bind JSON to the User model
-	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	// Check if a user with the same phone number or email already exists
-	var existingUser models.User
-	if err := postgres.DB.Where("phone = ? OR email = ?", user.Phone, user.Email).First(&existingUser).Error; err == nil {
-		// If a user is found, return a conflict error
-		c.JSON(http.StatusConflict, gin.H{
-			"error": "User with the same phone number or email already exists",
-		})
-		return
-	}
-
-	// Generate a new UUID for the user
-	newUUID, err := uuid.NewV4()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate UUID"})
-		return
-	}
-	user.ID = newUUID
-
-	// Save user to the database
-	if err := postgres.DB.Create(&user).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "User created successfully",
-		"user":    user,
-	})
-}
-
-// GetUsers retrieves all users from the postgres
+// GetUsers retrieves all users or a specific user by ID if provided
+// @Summary Get all users or a specific user by ID
+// @Description Get all users in the system, or a specific user if the user_id query parameter is provided
+// @Tags Users
+// @Produce json
+// @Security ApiKeyAuth
+// @Param user_id query string false "User ID to filter by"
+// @Router /api/v1/users [get]
 func GetUsers(c *gin.Context) {
 	var users []models.User
 
