@@ -54,6 +54,44 @@
                 "responses": {}
             }
         },
+        "/api/v1/auth/logout": {
+            "post": {
+                "description": "Clear user authentication cookies",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout a user",
+                "responses": {}
+            }
+        },
+        "/api/v1/auth/refresh": {
+            "post": {
+                "description": "Generate a new access token using a refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh Access Token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Refresh Token",
+                        "name": "refresh_token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/api/v1/auth/register": {
             "post": {
                 "description": "Create a new user in the system",

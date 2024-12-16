@@ -15,6 +15,10 @@ services:
       - PORT=${PORT}
       - APP_NAME=${APP_NAME}
       - ENVIRONMENT=${ENVIRONMENT}
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+      - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
+      - ACCESS_TOKEN_AGE=${ACCESS_TOKEN_AGE}
+      - REFRESH_TOKEN_AGE=${REFRESH_TOKEN_AGE}
 
   postgres:
     image: postgres:15-alpine

@@ -35,3 +35,9 @@ type UserResponse struct {
 	Role         string    `gorm:"type:varchar(50);not null;default:'restaurant_admin';check:role IN ('admin', 'restaurant_admin')" json:"role"`
 	RestaurantID uuid.UUID `gorm:"type:uuid;not null" json:"restaurant_id"`
 }
+
+type UserJwt struct{
+	ID string `json:"id"`
+	Name string `json:"name"`
+	Role string `json:"role"`
+}
