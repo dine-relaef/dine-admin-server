@@ -27,6 +27,54 @@
                 }
             }
         },
+        "/api/v1/auth/google": {
+            "get": {
+                "description": "Get Google OAuth2 URL with state parameter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Initiate Google OAuth2 login",
+                "responses": {}
+            }
+        },
+        "/api/v1/auth/google/callback": {
+            "post": {
+                "description": "Handle Google OAuth2 callback",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Google OAuth2 Callback",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OAuth2 authorization code",
+                        "name": "code",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "OAuth2 state parameter",
+                        "name": "state",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/api/v1/auth/login": {
             "post": {
                 "description": "Login a user in the system",
@@ -626,7 +674,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Menu"
+                    "Menu Category"
                 ],
                 "summary": "Create a new category for a specific menu",
                 "parameters": [

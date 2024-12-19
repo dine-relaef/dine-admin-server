@@ -12,5 +12,7 @@ func SetupAuthRoutes(authGroup *gin.RouterGroup) {
 	authGroup.POST("/login", services.LoginUser)
 	authGroup.GET("/logout", services.LogoutUser)
 	authGroup.GET("/refresh", services.RefreshToken)
+	authGroup.GET("/google", services.GoogleLogin)
+	authGroup.GET("/google/callback", services.GoogleCallback)
 
 }

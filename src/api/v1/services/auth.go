@@ -1,11 +1,16 @@
 package services
 
 import (
+	"context"
+	"encoding/json"
 	postgres "menu-server/src/config/database"
+	"menu-server/src/config/env"
 	models "menu-server/src/models"
 	utils "menu-server/src/utils"
 	"net/http"
+	"net/url"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
@@ -145,6 +150,142 @@ func LoginUser(c *gin.Context) {
 			"refresh": refreshToken,
 		},
 	})
+}
+
+// GoogleLogin initiates the Google OAuth2 flow
+// @Summary Initiate Google OAuth2 login
+// @Description Get Google OAuth2 URL with state parameter
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Router /api/v1/auth/google [get]
+func GoogleLogin(c *gin.Context) {
+	// Generate random state
+	state := utils.GenerateState()
+
+	// Store state in cookie
+	c.SetCookie(
+		"oauth_state",
+		state,
+		int(time.Now().Add(15*time.Minute).Unix()),
+		"/",
+		"",    // empty domain for testing
+		false, // not secure for testing
+		true,  // HttpOnly
+	)
+
+	url := env.Config.AuthCodeURL(state)
+	c.JSON(http.StatusOK, gin.H{"url": url})
+}
+
+// GoogleCallback handles the Google OAuth2 callback
+// @Summary Google OAuth2 Callback
+// @Description Handle Google OAuth2 callback
+// @Tags Auth
+// @Accept json
+// @Param code query string true "OAuth2 authorization code"
+// @Param state query string true "OAuth2 state parameter"
+// @Produce json
+// @Router /api/v1/auth/google/callback [post]
+func GoogleCallback(c *gin.Context) {
+	// Retrieve the authorization code from query parameters
+	code := c.Query("code")
+	if code == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Authorization code is missing"})
+		return
+	}
+
+	// No need to decode the code parameter
+	decodedCodeURL, err := url.QueryUnescape(code)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to decode code parameter"})
+		return
+	}
+	// Validate the state parameter to prevent CSRF attacks
+	state := c.Query("state")
+	decodeStateURl, err := url.QueryUnescape(state)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to decode state parameter"})
+		return
+	}
+	expectedState, _ := c.Cookie("oauth_state")
+	if string(decodeStateURl) != expectedState {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid state parameter"})
+		return
+	}
+
+	// Exchange the authorization code for an access token
+	token, err := env.Config.Exchange(context.Background(), string(decodedCodeURL))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Use the access token to fetch user info
+	client := env.Config.Client(context.Background(), token)
+	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to fetch user info"})
+		return
+	}
+	defer resp.Body.Close()
+
+	// Decode the user info
+	var userInfo map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to decode user info"})
+		return
+	}
+	var user models.User
+	newAccount := false
+
+	// Check if user exists in the database
+	if err := postgres.DB.Where("email = ?", userInfo["email"].(string)).First(&user).Error; err != nil {
+		// User not found, create a new user
+		newAccount = true
+		user = models.User{
+			ID:            uuid.Must(uuid.NewV4()),
+			Name:          userInfo["name"].(string),
+			Email:         userInfo["email"].(string),
+			VerifiedEmail: userInfo["verified_email"].(bool),
+			ProfileImage:  userInfo["picture"].(string),
+		}
+		if err := postgres.DB.Create(&user).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+			return
+		}
+	}
+
+	accessToken, err := utils.GenerateToken(models.UserJwt{ID: user.ID.String(), Role: user.Role}, "ACCESS")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	refreshToken, err := utils.GenerateToken(models.UserJwt{ID: user.ID.String(), Role: user.Role}, "REFRESH")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate refresh token"})
+		return
+	}
+
+	// Set tokens as cookies
+	c.SetCookie("access_token", accessToken, 3600, "/", "", false, true)
+	c.SetCookie("refresh_token", refreshToken, 3600, "/", "", false, true)
+
+	message := "Login successful"
+	if newAccount {
+		message = "Account created successfully"
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": message,
+		"user":    user,
+		"tokens": gin.H{
+			"access":  accessToken,
+			"refresh": refreshToken,
+		},
+	})
+
 }
 
 // RefreshToken generates a new access token using a valid refresh token

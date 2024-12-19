@@ -290,7 +290,7 @@ paths:
       responses: {}
       summary: Create a new category for a specific menu
       tags:
-      - Menu
+      - Menu Category
   /api/v1/{restaurant_id}/menus/{menu_id}/categories/{category_id}/items:
     get:
       description: Retrieve all items for a specific category
@@ -376,6 +376,39 @@ paths:
       summary: Create a new menu item option
       tags:
       - Menu
+  /api/v1/auth/google:
+    get:
+      consumes:
+      - application/json
+      description: Get Google OAuth2 URL with state parameter
+      produces:
+      - application/json
+      responses: {}
+      summary: Initiate Google OAuth2 login
+      tags:
+      - Auth
+  /api/v1/auth/google/callback:
+    post:
+      consumes:
+      - application/json
+      description: Handle Google OAuth2 callback
+      parameters:
+      - description: OAuth2 authorization code
+        in: query
+        name: code
+        required: true
+        type: string
+      - description: OAuth2 state parameter
+        in: query
+        name: state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Google OAuth2 Callback
+      tags:
+      - Auth
   /api/v1/auth/login:
     post:
       consumes:
