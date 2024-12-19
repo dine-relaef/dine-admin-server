@@ -1,16 +1,17 @@
 package routes
 
 import (
-	services "menu-server/src/api/v1/services"
+	"menu-server/src/api/v1/services"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SetupOrderRoutes(OrderGroup *gin.RouterGroup) {
-	OrderGroup.POST("/", services.CreateOrder)
-	OrderGroup.GET("/", services.GetOrders)
-	OrderGroup.GET("/:id", services.GetOrderByID)
-	OrderGroup.PUT("/:id", services.UpdateOrder)
-	OrderGroup.DELETE("/:id", services.DeleteOrder)
+func SetupOrderRoutes(orderGroup *gin.RouterGroup) {
+
+	orderGroup.POST("", services.CreateOrder)
+	orderGroup.GET("", services.ListOrders)
+	orderGroup.GET("/:id", services.GetOrder)
+	orderGroup.PUT("/:id/status", services.UpdateOrderStatus)
+	orderGroup.POST("/:id/cancel", services.CancelOrder)
 
 }

@@ -123,7 +123,7 @@ func LoginUser(c *gin.Context) {
 	// Generate JWT tokens
 	accessToken, err := utils.GenerateToken(models.UserJwt{ID: user.ID.String(), Role: user.Role}, "ACCESS")
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate access token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

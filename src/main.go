@@ -93,5 +93,5 @@ func V1Routes(r *gin.Engine) {
 	routes.SetupPlanRoutes(v1.Group("/plans"))
 	routes.SetupPaymentRoutes(v1.Group("/payments"))
 	routes.SetupOrderRoutes(v1.Group("/orders"))
-	routes.SetupMenuRoutes(v1.Group("/menus"))
+	routes.SetupMenuRoutes(v1.Group("/:restaurant_id/menus"))
 }

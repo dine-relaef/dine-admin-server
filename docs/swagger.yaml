@@ -6,6 +6,131 @@ definitions:
       status:
         type: string
     type: object
+  models.AddMenuCategoryData:
+    properties:
+      description:
+        type: string
+      image_url:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  models.AddMenuData:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  models.AddMenuItemData:
+    properties:
+      description:
+        type: string
+      image_url:
+        type: string
+      is_available:
+        type: boolean
+      is_vegetarian:
+        type: boolean
+      name:
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/models.AddMenuItemOptionData'
+        type: array
+    required:
+    - name
+    type: object
+  models.AddMenuItemOptionData:
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+    required:
+    - name
+    - price
+    type: object
+  models.AddRestaurantData:
+    properties:
+      banner_image_url:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      location:
+        $ref: '#/definitions/models.Location'
+      logo_image_url:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      pure_veg:
+        type: boolean
+    type: object
+  models.CreateOrder:
+    properties:
+      customer_email:
+        type: string
+      customer_name:
+        type: string
+      customer_phone:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/models.CreateOrderItem'
+        type: array
+      notes:
+        type: string
+      order_type:
+        enum:
+        - DINEIN
+        - PICKUP
+        - DELIVERY
+        type: string
+      payment_type:
+        enum:
+        - online
+        - onsite
+        type: string
+      restaurant_id:
+        type: string
+    required:
+    - customer_name
+    - customer_phone
+    - items
+    - order_type
+    - payment_type
+    - restaurant_id
+    type: object
+  models.CreateOrderItem:
+    properties:
+      item_option_id:
+        type: string
+      item_option_name:
+        type: string
+      menu_item_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - menu_item_id
+    - quantity
+    type: object
+  models.Location:
+    properties:
+      address:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+    type: object
   models.LoginUserData:
     properties:
       email:
@@ -14,6 +139,45 @@ definitions:
         type: string
     type: object
   models.RegisterUserData:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  models.UpdateRestaurantData:
+    properties:
+      banner_image_url:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      location:
+        $ref: '#/definitions/models.Location'
+      logo_image_url:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      pure_veg:
+        type: boolean
+    type: object
+  models.UpdateUserDataByAdmin:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  models.UpdateUserDataByUser:
     properties:
       email:
         type: string
@@ -42,6 +206,176 @@ paths:
       summary: Health check endpoint
       tags:
       - Health
+  /api/v1/{restaurant_id}/menus:
+    get:
+      description: Retrieve all menus
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve all menus
+      tags:
+      - Menu
+    post:
+      consumes:
+      - application/json
+      description: Create a new menu
+      parameters:
+      - description: Menu data
+        in: body
+        name: menu
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddMenuData'
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new menu
+      tags:
+      - Menu
+  /api/v1/{restaurant_id}/menus/{menu_id}:
+    get:
+      description: Retrieve a specific menu by ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      - description: Menu ID
+        in: path
+        name: menu_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve a specific menu by ID
+      tags:
+      - Menu
+  /api/v1/{restaurant_id}/menus/{menu_id}/categories:
+    post:
+      consumes:
+      - application/json
+      description: Create a new category for a specific menu
+      parameters:
+      - description: Category data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddMenuCategoryData'
+      - description: Menu ID
+        in: path
+        name: menu_id
+        required: true
+        type: string
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new category for a specific menu
+      tags:
+      - Menu
+  /api/v1/{restaurant_id}/menus/{menu_id}/categories/{category_id}/items:
+    get:
+      description: Retrieve all items for a specific category
+      parameters:
+      - description: Category ID
+        in: path
+        name: category_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve all items for a specific category
+      tags:
+      - Menu
+    post:
+      consumes:
+      - application/json
+      description: Create a new menu item
+      parameters:
+      - description: Item data
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddMenuItemData'
+      - description: Category ID
+        in: path
+        name: category_id
+        required: true
+        type: string
+      - description: Menu ID
+        in: path
+        name: menu_id
+        required: true
+        type: string
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new menu item
+      tags:
+      - Menu Category Item
+  /api/v1/{restaurant_id}/menus/{menu_id}/categories/{category_id}/items/{menu_item_id}/options:
+    post:
+      consumes:
+      - application/json
+      description: Create a new menu item option
+      parameters:
+      - description: Item data
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddMenuItemOptionData'
+      - description: Menu Item ID
+        in: path
+        name: menu_item_id
+        required: true
+        type: string
+      - description: Category ID
+        in: path
+        name: category_id
+        required: true
+        type: string
+      - description: Menu ID
+        in: path
+        name: menu_id
+        required: true
+        type: string
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new menu item option
+      tags:
+      - Menu
   /api/v1/auth/login:
     post:
       consumes:
@@ -104,21 +438,279 @@ paths:
       summary: Create a new user
       tags:
       - Auth
+  /api/v1/orders:
+    get:
+      consumes:
+      - application/json
+      description: Get list of orders for a specific restaurant
+      parameters:
+      - description: Restaurant ID
+        in: query
+        name: restaurant_id
+        required: true
+        type: string
+      - description: Order Status Filter
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: List restaurant orders
+      tags:
+      - Orders
+    post:
+      consumes:
+      - application/json
+      description: Create a new order with items and options
+      parameters:
+      - description: Order data
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateOrder'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new order
+      tags:
+      - Orders
+  /api/v1/orders/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get order details
+      tags:
+      - Orders
+  /api/v1/orders/{id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Cancel an existing order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Cancel order
+      tags:
+      - Orders
+  /api/v1/orders/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: Update the status of a specific order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New Status
+        in: body
+        name: status
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Update order status
+      tags:
+      - Orders
+  /api/v1/restaurants:
+    get:
+      description: Retrieve all restaurants by User
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve all restaurants by User
+      tags:
+      - Restaurant
+    post:
+      consumes:
+      - application/json
+      description: Create a new restaurant
+      parameters:
+      - description: Restaurant data
+        in: body
+        name: restaurant
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddRestaurantData'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new restaurant
+      tags:
+      - Restaurant
+  /api/v1/restaurants/{id}:
+    delete:
+      description: Delete a restaurant by ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Delete a restaurant
+      tags:
+      - Restaurant
+    get:
+      description: Retrieve a restaurant by ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve a restaurant by ID
+      tags:
+      - Restaurant
+    put:
+      consumes:
+      - application/json
+      description: Update a restaurant by ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Restaurant data
+        in: body
+        name: restaurant
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateRestaurantData'
+      produces:
+      - application/json
+      responses: {}
+      summary: Update a restaurant
+      tags:
+      - Restaurant
+  /api/v1/restaurants/get-all:
+    get:
+      description: Retrieve all restaurants
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve all restaurants
+      tags:
+      - Restaurant
   /api/v1/users:
     get:
-      description: Get all users in the system, or a specific user if the user_id
-        query parameter is provided
+      description: Get the user information
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get user information
+      tags:
+      - User
+    put:
+      description: Update the user information
       parameters:
-      - description: User ID to filter by
-        in: query
-        name: user_id
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserDataByUser'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update user information
+      tags:
+      - User
+  /api/v1/users/{id}:
+    delete:
+      description: Delete a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
         type: string
       produces:
       - application/json
       responses: {}
       security:
       - ApiKeyAuth: []
-      summary: Get all users or a specific user by ID
+      summary: Delete a user by ID
       tags:
-      - Users
+      - Admin
+    get:
+      description: Get a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get a user by ID
+      tags:
+      - Admin
+    put:
+      description: Update a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserDataByAdmin'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update a user by ID
+      tags:
+      - Admin
+  /api/v1/users/get-all:
+    get:
+      description: Get all users in the system
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all users
+      tags:
+      - Admin
 swagger: "2.0"

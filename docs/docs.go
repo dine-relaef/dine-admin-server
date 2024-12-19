@@ -130,6 +130,271 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/api/v1/orders": {
+            "get": {
+                "description": "Get list of orders for a specific restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "List restaurant orders",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "restaurant_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order Status Filter",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            },
+            "post": {
+                "description": "Create a new order with items and options",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create a new order",
+                "parameters": [
+                    {
+                        "description": "Order data",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateOrder"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/orders/{id}": {
+            "get": {
+                "description": "Get detailed information about a specific order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get order details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/orders/{id}/cancel": {
+            "post": {
+                "description": "Cancel an existing order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Cancel order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/orders/{id}/status": {
+            "put": {
+                "description": "Update the status of a specific order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Update order status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "New Status",
+                        "name": "status",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/restaurants": {
+            "get": {
+                "description": "Retrieve all restaurants by User",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "summary": "Retrieve all restaurants by User",
+                "responses": {}
+            },
+            "post": {
+                "description": "Create a new restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "summary": "Create a new restaurant",
+                "parameters": [
+                    {
+                        "description": "Restaurant data",
+                        "name": "restaurant",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddRestaurantData"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/restaurants/get-all": {
+            "get": {
+                "description": "Retrieve all restaurants",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "summary": "Retrieve all restaurants",
+                "responses": {}
+            }
+        },
+        "/api/v1/restaurants/{id}": {
+            "get": {
+                "description": "Retrieve a restaurant by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "summary": "Retrieve a restaurant by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "put": {
+                "description": "Update a restaurant by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "summary": "Update a restaurant",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Restaurant data",
+                        "name": "restaurant",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateRestaurantData"
+                        }
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "description": "Delete a restaurant by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "summary": "Delete a restaurant",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/api/v1/users": {
             "get": {
                 "security": [
@@ -137,20 +402,390 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get all users in the system, or a specific user if the user_id query parameter is provided",
+                "description": "Get the user information",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "User"
                 ],
-                "summary": "Get all users or a specific user by ID",
+                "summary": "Get user information",
+                "responses": {}
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update the user information",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update user information",
+                "parameters": [
+                    {
+                        "description": "User data",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateUserDataByUser"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/users/get-all": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all users in the system",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all users",
+                "responses": {}
+            }
+        },
+        "/api/v1/users/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a user by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get a user by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User ID to filter by",
-                        "name": "user_id",
-                        "in": "query"
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update a user by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a user by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User data",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateUserDataByAdmin"
+                        }
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a user by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a user by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/{restaurant_id}/menus": {
+            "get": {
+                "description": "Retrieve all menus",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Retrieve all menus",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "restaurant_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "post": {
+                "description": "Create a new menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Create a new menu",
+                "parameters": [
+                    {
+                        "description": "Menu data",
+                        "name": "menu",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddMenuData"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "restaurant_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/{restaurant_id}/menus/{menu_id}": {
+            "get": {
+                "description": "Retrieve a specific menu by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Retrieve a specific menu by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "restaurant_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Menu ID",
+                        "name": "menu_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/{restaurant_id}/menus/{menu_id}/categories": {
+            "post": {
+                "description": "Create a new category for a specific menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Create a new category for a specific menu",
+                "parameters": [
+                    {
+                        "description": "Category data",
+                        "name": "category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddMenuCategoryData"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Menu ID",
+                        "name": "menu_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "restaurant_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/{restaurant_id}/menus/{menu_id}/categories/{category_id}/items": {
+            "get": {
+                "description": "Retrieve all items for a specific category",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Retrieve all items for a specific category",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category ID",
+                        "name": "category_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "post": {
+                "description": "Create a new menu item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu Category Item"
+                ],
+                "summary": "Create a new menu item",
+                "parameters": [
+                    {
+                        "description": "Item data",
+                        "name": "item",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddMenuItemData"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category ID",
+                        "name": "category_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Menu ID",
+                        "name": "menu_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "restaurant_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/{restaurant_id}/menus/{menu_id}/categories/{category_id}/items/{menu_item_id}/options": {
+            "post": {
+                "description": "Create a new menu item option",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Create a new menu item option",
+                "parameters": [
+                    {
+                        "description": "Item data",
+                        "name": "item",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddMenuItemOptionData"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Menu Item ID",
+                        "name": "menu_item_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category ID",
+                        "name": "category_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Menu ID",
+                        "name": "menu_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "restaurant_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {}
@@ -169,6 +804,192 @@ const docTemplate = `{
                 }
             }
         },
+        "models.AddMenuCategoryData": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AddMenuData": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AddMenuItemData": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "is_available": {
+                    "type": "boolean"
+                },
+                "is_vegetarian": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AddMenuItemOptionData"
+                    }
+                }
+            }
+        },
+        "models.AddMenuItemOptionData": {
+            "type": "object",
+            "required": [
+                "name",
+                "price"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.AddRestaurantData": {
+            "type": "object",
+            "properties": {
+                "banner_image_url": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/models.Location"
+                },
+                "logo_image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "pure_veg": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.CreateOrder": {
+            "type": "object",
+            "required": [
+                "customer_name",
+                "customer_phone",
+                "items",
+                "order_type",
+                "payment_type",
+                "restaurant_id"
+            ],
+            "properties": {
+                "customer_email": {
+                    "type": "string"
+                },
+                "customer_name": {
+                    "type": "string"
+                },
+                "customer_phone": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CreateOrderItem"
+                    }
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "order_type": {
+                    "type": "string",
+                    "enum": [
+                        "DINEIN",
+                        "PICKUP",
+                        "DELIVERY"
+                    ]
+                },
+                "payment_type": {
+                    "type": "string",
+                    "enum": [
+                        "online",
+                        "onsite"
+                    ]
+                },
+                "restaurant_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CreateOrderItem": {
+            "type": "object",
+            "required": [
+                "menu_item_id",
+                "quantity"
+            ],
+            "properties": {
+                "item_option_id": {
+                    "type": "string"
+                },
+                "item_option_name": {
+                    "type": "string"
+                },
+                "menu_item_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "models.Location": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                }
+            }
+        },
         "models.LoginUserData": {
             "type": "object",
             "properties": {
@@ -181,6 +1002,66 @@ const docTemplate = `{
             }
         },
         "models.RegisterUserData": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdateRestaurantData": {
+            "type": "object",
+            "properties": {
+                "banner_image_url": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/models.Location"
+                },
+                "logo_image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "pure_veg": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.UpdateUserDataByAdmin": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdateUserDataByUser": {
             "type": "object",
             "properties": {
                 "email": {

@@ -15,16 +15,22 @@ type User struct {
 	Password    string       `gorm:"type:varchar(255);not null" json:"-"`
 	Role        string       `gorm:"type:varchar(50);not null;default:'restaurant_admin';check:role IN ('admin', 'restaurant_admin')" json:"role"`
 	Phone       string       `gorm:"type:varchar(20);unique;not null" json:"phone"`
-	Restaurants []Restaurant `gorm:"foreignKey:AdminID" json:"restaurants"`
+	Restaurants []Restaurant `gorm:"foreignKey:RestaurantAdminID" json:"restaurants"`
 	CreatedAt   time.Time    `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt   time.Time    `gorm:"autoUpdateTime" json:"updated_at"`
 }
 
-type UpdateUserData struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
+type UpdateUserDataByAdmin struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Phone string `json:"phone"`
+}
+
+type UpdateUserDataByUser struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Phone string `json:"phone"`
 	Password string `json:"password"`
-	Phone    string `json:"phone"`
 }
 
 type UserResponse struct {
@@ -36,8 +42,8 @@ type UserResponse struct {
 	RestaurantID uuid.UUID `gorm:"type:uuid;not null" json:"restaurant_id"`
 }
 
-type UserJwt struct{
-	ID string `json:"id"`
+type UserJwt struct {
+	ID   string `json:"id"`
 	Name string `json:"name"`
 	Role string `json:"role"`
 }

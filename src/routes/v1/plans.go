@@ -9,10 +9,10 @@ import (
 
 func SetupPlanRoutes(PlanGroup *gin.RouterGroup) {
 
-	PlanGroup.POST("/", middleware.RoleMiddleware("admin"), services.CreatePlan)
+	PlanGroup.POST("/", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin"}), services.CreatePlan)
 	PlanGroup.GET("/", services.GetPlans)
 	PlanGroup.GET("/:id", services.GetPlanByID)
-	PlanGroup.PUT("/:id", middleware.RoleMiddleware("admin"), services.UpdatePlan)
-	PlanGroup.DELETE("/:id", middleware.RoleMiddleware("admin"), services.DeletePlan)
+	PlanGroup.PUT("/:id", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin"}), services.UpdatePlan)
+	PlanGroup.DELETE("/:id", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin"}), services.DeletePlan)
 
 }
