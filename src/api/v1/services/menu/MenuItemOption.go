@@ -4,7 +4,7 @@ import (
 	postgres "menu-server/src/config/database"
 	models "menu-server/src/models"
 	"net/http"
-
+	utils "menu-server/src/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 )
@@ -22,18 +22,19 @@ import (
 // @Param restaurant_id path string true "Restaurant ID"
 // @Router /api/v1/{restaurant_id}/menus/{menu_id}/categories/{category_id}/items/{menu_item_id}/options [post]
 func CreateMenuItemOption(c *gin.Context) {
-	userID, _ := c.Get("userID")
-	role, _ := c.Get("role")
-
-	menuItemID := c.Param("menu_item_id")
 	restaurantID := c.Param("restaurant_id")
 
-	if role != "admin" {
-		if err := postgres.DB.Where("restaurant_admin_id = ? AND id = ?", userID, restaurantID).First(&models.Restaurant{}).Error; err != nil {
-			c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to create category for this menu"})
-			return
-		}
+	if isAdmin, err := utils.IsAuthorised(c, restaurantID); err != nil {
+		// Unauthorized or Forbidden response
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	} else if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to create menu for this restaurant"})
+		return
 	}
+
+	menuItemID := c.Param("menu_item_id")
+
 
 	var menuItemOption models.MenuItemOption
 	if err := c.ShouldBindJSON(&menuItemOption); err != nil {

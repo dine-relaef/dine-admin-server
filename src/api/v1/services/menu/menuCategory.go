@@ -4,7 +4,7 @@ import (
 	postgres "menu-server/src/config/database"
 	models "menu-server/src/models"
 	"net/http"
-
+	utils "menu-server/src/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 )
@@ -20,20 +20,18 @@ import (
 // @Param restaurant_id path string true "Restaurant ID"
 // @Router /api/v1/{restaurant_id}/menus/{menu_id}/categories [post]
 func CreateMenuCategory(c *gin.Context) {
-
-	userID, _ := c.Get("userID")
-	role, _ := c.Get("role")
-
-	menuID := c.Param("menu_id")
 	restaurantID := c.Param("restaurant_id")
-
-	if role != "admin" {
-		if err := postgres.DB.Where("restaurant_admin_id = ? AND id = ?", userID, restaurantID).First(&models.Restaurant{}).Error; err != nil {
-			c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to create category for this menu"})
+	
+	if isAdmin, err := utils.IsAuthorised(c, restaurantID); err != nil {
+		// Unauthorized or Forbidden response
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+		} else if !isAdmin {
+			c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to create Category for this menu"})
 			return
 		}
-	}
-
+		
+	menuID := c.Param("menu_id")
 	var category models.MenuCategory
 	if err := c.ShouldBindJSON(&category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -90,6 +88,16 @@ func GetMenuCategoryByID(c *gin.Context) {
 
 // UpdateMenuCategory updates a specific menu category by ID
 func UpdateMenuCategory(c *gin.Context) {
+	restaurantID := c.Param("restaurant_id")
+
+	if isAdmin, err := utils.IsAuthorised(c, restaurantID); err != nil {
+		// Unauthorized or Forbidden response
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	} else if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to update category for this menu"})
+		return
+	}
 	categoryID := c.Param("category_id")
 	var category models.MenuCategory
 
@@ -113,6 +121,17 @@ func UpdateMenuCategory(c *gin.Context) {
 
 // DeleteMenuCategory deletes a specific menu category by ID
 func DeleteMenuCategory(c *gin.Context) {
+	restaurantID := c.Param("restaurant_id")
+
+	if isAdmin, err := utils.IsAuthorised(c, restaurantID); err != nil {
+		// Unauthorized or Forbidden response
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	} else if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to delete category for this menu"})
+		return
+	}
+
 	categoryID := c.Param("category_id")
 	if err := postgres.DB.Delete(&models.MenuCategory{}, "id = ?", categoryID).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete category"})

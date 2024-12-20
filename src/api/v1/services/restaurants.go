@@ -39,18 +39,42 @@ func GetAllRestaurants(c *gin.Context) {
 // @Produce json
 // @Router /api/v1/restaurants [get]
 func GetRestaurants(c *gin.Context) {
-	var restaurant []models.Restaurant
+	var restaurantDatas []models.Restaurant
+
+	// Retrieve user ID from context
 	userId, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
-	if err := postgres.DB.Where("restaurant_admin_id = ?", userId).Find(&restaurant).Error; err != nil {
+
+	// Fetch restaurants associated with the user ID
+	if err := postgres.DB.Where("restaurant_admin_id = ?", userId).Find(&restaurantDatas).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve restaurants"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"restaurants": restaurant})
+	// Map fetched data to ResponseRestaurant structs
+	var response []models.ResponseRestaurantData
+	for _, restaurant := range restaurantDatas {
+		response = append(response, models.ResponseRestaurantData{
+			ID:             restaurant.ID,
+			Name:           restaurant.Name,
+			Description:    restaurant.Description,
+			PureVeg:        restaurant.PureVeg,
+			Location:       restaurant.Location,
+			BannerImageUrl: restaurant.BannerImageUrl,
+			LogoImageUrl:   restaurant.LogoImageUrl,
+			Phone:          restaurant.Phone,
+			Email:          restaurant.Email,
+			IsActive:       restaurant.IsActive,
+			HasParking:     restaurant.HasParking,
+			HasPickup:      restaurant.HasPickup,
+			NumberOfTables: restaurant.NumberOfTables,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"restaurants": response})
 }
 
 // GetRestaurantByID godoc
@@ -62,26 +86,48 @@ func GetRestaurants(c *gin.Context) {
 // @Router /api/v1/restaurants/{id} [get]
 func GetRestaurantByID(c *gin.Context) {
 	id := c.Param("id")
-	var restaurant models.Restaurant
+	var restaurantData models.Restaurant
+
+	// Extract userID and role from context
 	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 	role, _ := c.Get("role")
+
+	// Restaurant Admin access check
 	if role == "restaurant_admin" {
-		if err := postgres.DB.Where("id = ? AND restaurant_admin_id = ?", id, userID).Find(&restaurant).Error; err != nil {
+		if err := postgres.DB.Where("id = ? AND restaurant_admin_id = ?", id, userID).First(&restaurantData).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Restaurant ID not found or access denied"})
+			return
+		}
+	} else {
+		// General access
+		if err := postgres.DB.Where("id = ?", id).First(&restaurantData).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Restaurant ID not found"})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"restaurant": restaurant})
-		return
 	}
-	if err := postgres.DB.Where("id = ? ", id).Find(&restaurant).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Restaurant ID not found"})
-		return
+
+	// Map data to ResponseRestaurant struct
+	response := models.ResponseRestaurantData{
+		ID:             restaurantData.ID,
+		Name:           restaurantData.Name,
+		Description:    restaurantData.Description,
+		PureVeg:        restaurantData.PureVeg,
+		Location:       restaurantData.Location,
+		BannerImageUrl: restaurantData.BannerImageUrl,
+		LogoImageUrl:   restaurantData.LogoImageUrl,
+		Phone:          restaurantData.Phone,
+		Email:          restaurantData.Email,
+		IsActive:       restaurantData.IsActive,
+		HasParking:     restaurantData.HasParking,
+		HasPickup:      restaurantData.HasPickup,
+		NumberOfTables: restaurantData.NumberOfTables,
 	}
-	c.JSON(http.StatusOK, gin.H{"restaurant": restaurant})
+
+	c.JSON(http.StatusOK, gin.H{"restaurant": response})
 }
 
 // CreateRestaurant godoc
@@ -112,13 +158,17 @@ func CreateRestaurant(c *gin.Context) {
 		return
 	}
 	var restaurant models.Restaurant = models.Restaurant{
-		RestaurantAdminID: restaurantAdminID,
+		ID: restaurantAdminID,
 		Name:              restaurantData.Name,
 		Description:       restaurantData.Description,
 		Location:          restaurantData.Location,
 		Phone:             restaurantData.Phone,
 		PureVeg:           restaurantData.PureVeg,
 		Email:             restaurantData.Email,
+		IsActive:          restaurantData.HasParking,
+		HasParking:        restaurantData.HasParking,
+		HasPickup:         restaurantData.HasPickup,
+		NumberOfTables:    restaurantData.NumberOfTables,
 		LogoImageUrl:      restaurantData.LogoImageUrl,
 		BannerImageUrl:    restaurantData.BannerImageUrl,
 	}
@@ -143,58 +193,56 @@ func CreateRestaurant(c *gin.Context) {
 // @Param restaurant body models.UpdateRestaurantData true "Restaurant data"
 // @Router /api/v1/restaurants/{id} [put]
 func UpdateRestaurant(c *gin.Context) {
-	
+
 	id := c.Param("id")
 	var restaurant models.Restaurant
 
+	// Fetch the restaurant by ID
 	if err := postgres.DB.First(&restaurant, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Restaurant ID not found"})
 		return
 	}
 
+	// Role-based authorization
 	role, _ := c.Get("role")
 	if role != "admin" && role != "restaurant_admin" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
+	// Check if the restaurant_admin is authorized for this restaurant
 	if role == "restaurant_admin" {
-		userId, _ := c.Get("userID")
-		if restaurant.RestaurantAdminID.String() != userId {
+		userID, _ := c.Get("userID")
+		if restaurant.AdminID.String() != userID {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			return
 		}
 	}
 
-	var input models.Restaurant
-	if err := c.ShouldBindJSON(&input); err != nil {
+	// Bind request data to UpdateRestaurantData schema
+	var resturantData models.UpdateRestaurantData
+	if err := c.ShouldBindJSON(&resturantData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if input.Name != "" {
-		restaurant.Name = input.Name
-	}
-	if input.Description != "" {
-		restaurant.Description = input.Description
-	}
-	if input.PureVeg != restaurant.PureVeg {
-		restaurant.PureVeg = input.PureVeg
-	}
-	if input.Phone != "" {
-		restaurant.Phone = input.Phone
-	}
-	if input.Email != "" {
-		restaurant.Email = input.Email
-	}
-	if input.BannerImageUrl != "" {
-		restaurant.BannerImageUrl = input.BannerImageUrl
-	}
-	if input.LogoImageUrl != "" {
-		restaurant.LogoImageUrl = input.LogoImageUrl
+	// Dynamically map fields from UpdateRestaurantData to Restaurant
+	updates := models.Restaurant{
+		Name:           resturantData.Name,
+		Description:    resturantData.Description,
+		PureVeg:        resturantData.PureVeg,
+		Phone:          resturantData.Phone,
+		Email:          resturantData.Email,
+		BannerImageUrl: resturantData.BannerImageUrl,
+		LogoImageUrl:   resturantData.LogoImageUrl,
+		IsActive:       resturantData.IsActive,
+		HasParking:     resturantData.HasParking,
+		HasPickup:      resturantData.HasPickup,
+		NumberOfTables: resturantData.NumberOfTables,
 	}
 
-	if err := postgres.DB.Save(&restaurant).Error; err != nil {
+	// Perform updates only on the fields that are non-zero values
+	if err := postgres.DB.Model(&restaurant).Updates(updates).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update restaurant"})
 		return
 	}

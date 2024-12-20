@@ -4,7 +4,7 @@ import (
 	postgres "menu-server/src/config/database"
 	models "menu-server/src/models"
 	"net/http"
-
+	utils "menu-server/src/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 )
@@ -22,22 +22,20 @@ import (
 // @Router /api/v1/{restaurant_id}/menus/{menu_id}/categories/{category_id}/items [post]
 func CreateMenuItem(c *gin.Context) {
 	// Retrieve user info from context
-	userID, _ := c.Get("userID")
-	role, _ := c.Get("role")
+	restaurantID := c.Param("restaurant_id")
+
+	if isAdmin, err := utils.IsAuthorised(c, restaurantID); err != nil {
+		// Unauthorized or Forbidden response
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	} else if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to create item for this category"})
+		return
+	}	
 
 	// Extract parameters
 	categoryID := c.Param("category_id")
 	menuID := c.Param("menu_id")
-	restaurantID := c.Param("restaurant_id")
-
-	// Role validation
-	if role != "admin" {
-		var restaurant models.Restaurant
-		if err := postgres.DB.Where("restaurant_admin_id = ? AND id = ?", userID, restaurantID).First(&restaurant).Error; err != nil {
-			c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to create items for this menu"})
-			return
-		}
-	}
 
 	// Parse and validate request body
 	var addMenuItemData models.AddMenuItemData
@@ -160,6 +158,17 @@ func GetMenuItemByID(c *gin.Context) {
 
 // UpdateMenuItem updates a specific menu item by ID
 func UpdateMenuItem(c *gin.Context) {
+	restaurantID := c.Param("restaurant_id")
+
+	if isAdmin, err := utils.IsAuthorised(c, restaurantID); err != nil {
+		// Unauthorized or Forbidden response
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	} else if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to update item for this category"})
+		return
+	}
+
 	itemID := c.Param("item_id")
 	var item models.MenuItem
 
@@ -183,6 +192,17 @@ func UpdateMenuItem(c *gin.Context) {
 
 // DeleteMenuItem deletes a specific menu item by ID
 func DeleteMenuItem(c *gin.Context) {
+	restaurantID := c.Param("restaurant_id")
+
+	if isAdmin, err := utils.IsAuthorised(c, restaurantID); err != nil {
+		// Unauthorized or Forbidden response
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	} else if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to create menu for this restaurant"})
+		return
+	}
+
 	itemID := c.Param("item_id")
 	if err := postgres.DB.Delete(&models.MenuItem{}, "id = ?", itemID).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete item"})

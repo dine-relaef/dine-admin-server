@@ -19,7 +19,7 @@ type User struct {
 	
 	VerifiedPhone bool         `gorm:"type:boolean;default:false" json:"verified_phone"`
 	ProfileImage  string       `gorm:"type:varchar(255)" json:"profile_image"`
-	Restaurants   []Restaurant `gorm:"foreignKey:RestaurantAdminID" json:"restaurants"`
+	Restaurants []Restaurant `gorm:"foreignKey:AdminID;references:ID" json:"restaurants"`
 	CreatedAt     time.Time    `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt     time.Time    `gorm:"autoUpdateTime" json:"updated_at"`
 }

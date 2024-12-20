@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"menu-server/src/api/v1/middleware"
+	middleware "menu-server/src/api/v1/middleware"
 	menu "menu-server/src/api/v1/services/menu"
 
 	"github.com/gin-gonic/gin"

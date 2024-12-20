@@ -12,55 +12,53 @@ import (
 
 // Location represents the geographical location of a restaurant.
 type Location struct {
-	Address   string  ` json:"address"`
-	Longitude float64 ` json:"longitude"`
+	Address   string  `json:"address"`
+	Longitude float64 `json:"longitude"`
 	Latitude  float64 `json:"latitude"`
 }
 
 func (l *Location) Scan(value interface{}) error {
-	// If value is nil, set a default Location
 	if value == nil {
 		return nil
 	}
-
-	// Convert the value to []byte
 	bytes, ok := value.([]byte)
 	if !ok {
 		return errors.New("failed to scan Location: value is not []byte")
 	}
-
-	// Unmarshal JSON into Location struct
 	return json.Unmarshal(bytes, l)
 }
 
-// Value implements the driver.Valuer interface
 func (l Location) Value() (driver.Value, error) {
-	// Marshal Location struct to JSON
 	return json.Marshal(l)
 }
 
 // Restaurant represents the restaurant entity in the database.
 type Restaurant struct {
-	ID                uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
-	Name              string    `gorm:"type:varchar(100);not null" json:"name"`
-	Description       string    `gorm:"type:text" json:"description"`
-	Phone             string    `gorm:"type:varchar(20);not null" json:"phone"`
-	Email             string    `gorm:"type:varchar(100);not null" json:"email"`
-	PureVeg           bool      `gorm:"type:boolean;default:false" json:"pure_veg"`
-	Location          Location  `gorm:"type:jsonb;not null" json:"location"`
-	BannerImageUrl    string    `gorm:"type:varchar(255)" json:"banner_image_url"`
-	LogoImageUrl      string    `gorm:"type:varchar(255)" json:"logo_image_url"`
-	RestaurantAdminID uuid.UUID `gorm:"type:uuid;not null" json:"restaurant_admin_id"`
-	Admin             User      `gorm:"foreignKey:RestaurantAdminID;constraint:OnDelete:CASCADE;" json:"-"`
-	Menu              []Menu    `gorm:"foreignKey:RestaurantID" json:"menu"`
-	Orders            []Order   `gorm:"foreignKey:RestaurantID" json:"orders"`
-	PlanID            uuid.UUID `gorm:"type:uuid;" json:"plan_id"`
-	CreatedAt         time.Time `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt         time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	ID             uuid.UUID      `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+	Name           string         `gorm:"type:varchar(100);not null" json:"name"`
+	PureVeg        bool           `gorm:"type:boolean;default:false" json:"pure_veg"`
+	Location       Location       `gorm:"type:string" json:"location"`
+	ImageURL       string         `gorm:"type:varchar(255)" json:"image_url"`
+	AdminID        uuid.UUID      `gorm:"type:uuid;not null" json:"admin_id"`
+	BannerImageUrl string   `json:"banner_image_url"`
+	LogoImageUrl   string   `json:"logo_image_url"`
+	Admin          User           `gorm:"foreignKey:AdminID;constraint:OnDelete:CASCADE;" json:"-"`
+	Menu           []Menu         `gorm:"foreignKey:RestaurantID" json:"menu"`
+	CreatedAt      time.Time      `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt      time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
+	Description    string         `gorm:"type:varchar(500)" json:"description"`
+	Phone          string         `gorm:"type:varchar(15);default" json:"phone"`
+	Email          string         `gorm:"type:varchar(100);not null" json:"email"`
+	IsActive       bool           `gorm:"type:boolean;default:true" json:"is_active"`
+	HasParking     bool           `gorm:"type:boolean;default:false" json:"has_parking"`
+	HasPickup      bool           `gorm:"type:boolean;default:false" json:"has_delivery"`
+	NumberOfTables int            `gorm:"type:int;not null;default:0" json:"number_of_tables"`
 }
 
 func (r *Restaurant) BeforeCreate(tx *gorm.DB) (err error) {
-	r.ID, err = uuid.NewV4()
+	if r.ID == uuid.Nil {
+		r.ID, err = uuid.NewV4()
+	}
 	return err
 }
 
@@ -73,6 +71,10 @@ type AddRestaurantData struct {
 	LogoImageUrl   string   `json:"logo_image_url"`
 	Phone          string   `json:"phone"`
 	Email          string   `json:"email"`
+	IsActive       bool     `json:"is_active"`
+	HasParking     bool     `json:"has_parking"`
+	HasPickup      bool     `json:"has_delivery"`
+	NumberOfTables int      `json:"number_of_tables"`
 }
 
 type ResponseRestaurantData struct {
@@ -85,7 +87,12 @@ type ResponseRestaurantData struct {
 	LogoImageUrl   string    `json:"logo_image_url"`
 	Phone          string    `json:"phone"`
 	Email          string    `json:"email"`
+	IsActive       bool      `json:"is_active"`
+	HasParking     bool      `json:"has_parking"`
+	HasPickup      bool      `json:"has_delivery"`
+	NumberOfTables int       `json:"number_of_tables"`
 }
+
 type UpdateRestaurantData struct {
 	Name           string   `json:"name"`
 	PureVeg        bool     `json:"pure_veg"`
@@ -95,4 +102,8 @@ type UpdateRestaurantData struct {
 	LogoImageUrl   string   `json:"logo_image_url"`
 	Phone          string   `json:"phone"`
 	Email          string   `json:"email"`
+	IsActive       bool     `json:"is_active"`
+	HasParking     bool     `json:"has_parking"`
+	HasPickup      bool     `json:"has_delivery"`
+	NumberOfTables int      `json:"number_of_tables"`
 }

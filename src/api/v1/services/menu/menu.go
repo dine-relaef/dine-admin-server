@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
+	utils "menu-server/src/utils"
 	// uuid "github.com/jackc/pgx/pgtype/ext/gofrs-uuid"
 )
 
@@ -27,29 +28,25 @@ func CreateMenu(c *gin.Context) {
 		return
 	}
 
-	restaurant_id := c.Param("restaurant_id")
-	role, _ := c.Get("role")
-	if role != "admin" {
-		user_id, exists := c.Get("userID")
-		if !exists {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-			return
-		}
+	restaurantID := c.Param("restaurant_id")
 
-		if err := postgres.DB.Where("id = ? AND restaurant_admin_id = ?", restaurant_id, user_id).First(&models.Restaurant{}).Error; err != nil {
-			c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to create menu for this restaurant"})
-			return
-		}
+	if isAdmin, err := utils.IsAuthorised(c, restaurantID); err != nil {
+		// Unauthorized or Forbidden response
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	} else if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to create menu for this restaurant"})
+		return
 	}
 
 	var existingMenu models.Menu
-	if err := postgres.DB.Where("name = ? AND restaurant_id = ?", menu.Name, restaurant_id).First(&existingMenu).Error; err == nil {
+	if err := postgres.DB.Where("name = ? AND restaurant_id = ?", menu.Name, restaurantID).First(&existingMenu).Error; err == nil {
 		// If a Menu with the same name and restaurant_id exists
 		c.JSON(http.StatusConflict, gin.H{"error": "This Restaurant has a Menu with the same name"})
 		return
 	}
 
-	RestaurantID, err := uuid.FromString(restaurant_id)
+	RestaurantID, err := uuid.FromString(restaurantID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid restaurant ID format"})
 		return
@@ -116,6 +113,17 @@ func GetMenuByID(c *gin.Context) {
 func UpdateMenu(c *gin.Context) {
 	id := c.Param("menu_id")
 	var menu models.Menu
+	
+	restaurantID := c.Param("restaurant_id")
+
+	if isAdmin, err := utils.IsAuthorised(c, restaurantID); err != nil {
+		// Unauthorized or Forbidden response
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	} else if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to update menu for this restaurant"})
+		return
+	}
 
 	if err := postgres.DB.First(&menu, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Menu not found"})
@@ -138,6 +146,18 @@ func UpdateMenu(c *gin.Context) {
 // DeleteMenu deletes a specific menu by ID
 func DeleteMenu(c *gin.Context) {
 	id := c.Param("menu_id")
+
+	restaurantID := c.Param("restaurant_id")
+
+	if isAdmin, err := utils.IsAuthorised(c, restaurantID); err != nil {
+		// Unauthorized or Forbidden response
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	} else if !isAdmin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to create menu for this restaurant"})
+		return
+	}
+	
 	if err := postgres.DB.Delete(&models.Menu{}, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete menu"})
 		return

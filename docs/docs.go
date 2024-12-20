@@ -936,6 +936,15 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "has_delivery": {
+                    "type": "boolean"
+                },
+                "has_parking": {
+                    "type": "boolean"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "location": {
                     "$ref": "#/definitions/models.Location"
                 },
@@ -944,6 +953,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "number_of_tables": {
+                    "type": "integer"
                 },
                 "phone": {
                     "type": "string"
@@ -1078,6 +1090,15 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "has_delivery": {
+                    "type": "boolean"
+                },
+                "has_parking": {
+                    "type": "boolean"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "location": {
                     "$ref": "#/definitions/models.Location"
                 },
@@ -1086,6 +1107,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "number_of_tables": {
+                    "type": "integer"
                 },
                 "phone": {
                     "type": "string"
