@@ -2,8 +2,10 @@ FROM golang:1.23.4-alpine
 
 # Install git and air for hot reloading
 RUN apk add --no-cache git
+
 ENV GOPROXY=direct
 ENV GOPRIVATE=github.com
+
 RUN go install github.com/air-verse/air@latest
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 # Set working directory

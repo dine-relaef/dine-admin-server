@@ -1,17 +1,17 @@
-package routes
+package routes_v1
 
 import (
-	services "menu-server/src/api/v1/services"
+	"menu-server/src/api/v1/middleware"
+	services_payments "menu-server/src/api/v1/services/payments"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupPaymentRoutes(PaymentGroup *gin.RouterGroup) {
 
-	PaymentGroup.POST("/", services.CreatePayment)
-	PaymentGroup.GET("/", services.GetPayments)
-	PaymentGroup.GET("/:id", services.GetPaymentByID)
-	PaymentGroup.PUT("/:id", services.UpdatePayment)
-	// PaymentGroup.DELETE("/:id", services.DeletePayment)
+	PaymentGroup.POST("/dine/:order_id", middleware.Authenticate, services_payments.CreateDinePayment)
+	PaymentGroup.GET("/dine/callback", services_payments.PaymentCallback)
+	// PaymentGroup.GET("/", services_payments.GetPayments)
+	// PaymentGroup.GET("/:id", services_payments.GetPaymentByID)
 
 }

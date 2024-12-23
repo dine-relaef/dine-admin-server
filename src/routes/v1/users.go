@@ -1,4 +1,4 @@
-package routes
+package routes_v1
 
 import (
 	"menu-server/src/api/v1/middleware"

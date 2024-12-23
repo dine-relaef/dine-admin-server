@@ -70,7 +70,6 @@ func GetRestaurants(c *gin.Context) {
 			IsActive:       restaurant.IsActive,
 			HasParking:     restaurant.HasParking,
 			HasPickup:      restaurant.HasPickup,
-			NumberOfTables: restaurant.NumberOfTables,
 		})
 	}
 
@@ -98,8 +97,8 @@ func GetRestaurantByID(c *gin.Context) {
 
 	// Restaurant Admin access check
 	if role == "restaurant_admin" {
-		if err := postgres.DB.Where("id = ? AND restaurant_admin_id = ?", id, userID).First(&restaurantData).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Restaurant ID not found or access denied"})
+		if err := postgres.DB.Where("id = ? AND admin_id = ?", id, userID).First(&restaurantData).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 	} else {
@@ -124,7 +123,6 @@ func GetRestaurantByID(c *gin.Context) {
 		IsActive:       restaurantData.IsActive,
 		HasParking:     restaurantData.HasParking,
 		HasPickup:      restaurantData.HasPickup,
-		NumberOfTables: restaurantData.NumberOfTables,
 	}
 
 	c.JSON(http.StatusOK, gin.H{"restaurant": response})
@@ -139,13 +137,15 @@ func GetRestaurantByID(c *gin.Context) {
 // @Param restaurant body models.AddRestaurantData true "Restaurant data"
 // @Router /api/v1/restaurants [post]
 func CreateRestaurant(c *gin.Context) {
+
+	restaurntAdminIDStr, _ := c.Get("userID")
+
 	var restaurantData models.AddRestaurantData
 	if err := c.ShouldBindJSON(&restaurantData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error 1": err.Error()})
 		return
 	}
 
-	restaurntAdminIDStr, _ := c.Get("userID")
 	restaurntAdminID, ok := restaurntAdminIDStr.(string)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user ID"})
@@ -158,19 +158,18 @@ func CreateRestaurant(c *gin.Context) {
 		return
 	}
 	var restaurant models.Restaurant = models.Restaurant{
-		ID: restaurantAdminID,
-		Name:              restaurantData.Name,
-		Description:       restaurantData.Description,
-		Location:          restaurantData.Location,
-		Phone:             restaurantData.Phone,
-		PureVeg:           restaurantData.PureVeg,
-		Email:             restaurantData.Email,
-		IsActive:          restaurantData.HasParking,
-		HasParking:        restaurantData.HasParking,
-		HasPickup:         restaurantData.HasPickup,
-		NumberOfTables:    restaurantData.NumberOfTables,
-		LogoImageUrl:      restaurantData.LogoImageUrl,
-		BannerImageUrl:    restaurantData.BannerImageUrl,
+		AdminID:        restaurantAdminID,
+		Name:           restaurantData.Name,
+		Description:    restaurantData.Description,
+		Location:       restaurantData.Location,
+		Phone:          restaurantData.Phone,
+		PureVeg:        restaurantData.PureVeg,
+		Email:          restaurantData.Email,
+		IsActive:       restaurantData.HasParking,
+		HasParking:     restaurantData.HasParking,
+		HasPickup:      restaurantData.HasPickup,
+		LogoImageUrl:   restaurantData.LogoImageUrl,
+		BannerImageUrl: restaurantData.BannerImageUrl,
 	}
 	if err := postgres.DB.Create(&restaurant).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -238,7 +237,6 @@ func UpdateRestaurant(c *gin.Context) {
 		IsActive:       resturantData.IsActive,
 		HasParking:     resturantData.HasParking,
 		HasPickup:      resturantData.HasPickup,
-		NumberOfTables: resturantData.NumberOfTables,
 	}
 
 	// Perform updates only on the fields that are non-zero values

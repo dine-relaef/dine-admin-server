@@ -4,6 +4,8 @@ import (
 	"log"
 	"menu-server/src/config/env"
 	"menu-server/src/models" // Adjust to the actual path
+	models_dine "menu-server/src/models/dine"
+	models_restaurant "menu-server/src/models/restaurant"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -14,18 +16,20 @@ var DB *gorm.DB
 
 // Aliased models for brevity
 type (
-	Plan           = models.Plan
-	User           = models.User
-	Restaurant     = models.Restaurant
-	Menu           = models.Menu
-	MenuItem       = models.MenuItem
-	MenuCategory   = models.MenuCategory
-	MenuItemOption = models.MenuItemOption
-	Order          = models.Order
-	Payment        = models.Payment
-	Subscription   = models.Subscription
-	OrderItem      = models.OrderItem
+	Plan                = models.Plan
+	User                = models.User
+	Restaurant          = models.Restaurant
+	Menu                = models.Menu
+	MenuItem            = models.MenuItem
+	MenuCategory        = models.MenuCategory
+	MenuItemOption      = models.MenuItemOption
+	RestaurantOrder     = models_restaurant.Order
+	DinePayment         = models_dine.DinePayment
+	Subscription        = models.Subscription
+	RestaurantOrderItem = models_restaurant.OrderItem
 
+	PlanFeature            = models.PlanFeature
+	PlanFeatureAssociation = models.PlanFeatureAssociation
 )
 
 // InitDB initializes the PostgreSQL database connection and runs migrations.
@@ -48,7 +52,8 @@ func InitDB() {
 		log.Fatalf("Failed to ensure UUID extension: %v", err)
 	}
 	// Drop table
-	// DB.Migrator().DropTable( &models.Order{})
+	// DB.Migrator().DropTable(&Subscription{})
+	// DB.Migrator().DropColumn(&models.Plan{}, "duration")
 	// Run migrations for all models
 	if err := migrateModels(); err != nil {
 		log.Fatalf("Failed to migrate database schema: %v", err)
@@ -67,14 +72,16 @@ func migrateModels() error {
 	return DB.AutoMigrate(
 		&User{},
 		&Plan{},
+		&PlanFeature{},
+		&PlanFeatureAssociation{},
 		&Restaurant{},
 		&Menu{},
 		&MenuCategory{},
 		&MenuItem{},
 		&MenuItemOption{},
-		&Order{},
-		&OrderItem{},
-		&Payment{},
+		&RestaurantOrder{},
+		&RestaurantOrderItem{},
+		&DinePayment{},
 		&Subscription{},
 	)
 }

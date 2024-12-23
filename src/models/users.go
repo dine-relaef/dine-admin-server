@@ -14,12 +14,12 @@ type User struct {
 	Email         string       `gorm:"type:varchar(100);not null;uniqueIndex:idx_email_phone" json:"email"`
 	Phone         string       `gorm:"type:varchar(20);not null;uniqueIndex:idx_email_phone" json:"phone"`
 	VerifiedEmail bool         `gorm:"type:boolean;default:false" json:"verified_email"`
+	VerifiedPhone bool         `gorm:"type:boolean;default:false" json:"verified_phone"`
 	Password      string       `gorm:"type:varchar(255);not null" json:"-"`
 	Role          string       `gorm:"type:varchar(50);not null;default:'restaurant_admin';check:role IN ('admin', 'restaurant_admin')" json:"role"`
-	
-	VerifiedPhone bool         `gorm:"type:boolean;default:false" json:"verified_phone"`
+	SignupSource  string       `gorm:"type:varchar(50);not null;default:'website';check:signup_source IN ('website', 'google', 'facebook', 'apple')" json:"signup_source"`
 	ProfileImage  string       `gorm:"type:varchar(255)" json:"profile_image"`
-	Restaurants []Restaurant `gorm:"foreignKey:AdminID;references:ID" json:"restaurants"`
+	Restaurants   []Restaurant `gorm:"foreignKey:AdminID;references:ID" json:"restaurants"`
 	CreatedAt     time.Time    `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt     time.Time    `gorm:"autoUpdateTime" json:"updated_at"`
 }

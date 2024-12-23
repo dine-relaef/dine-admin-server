@@ -20,3 +20,14 @@ func ParseDuration(durationStr string, defaultSeconds int) int64 {
 
 	return int64(duration.Seconds())
 }
+
+func ParsePlanDuration(durationStr string) int64 {
+	var durationMap = map[string]int64{
+		"1M": 29 * 24 * 60 * 60,     // 30 days
+		"6M": 6 * 29 * 24 * 60 * 60, // 6 months
+		"1Y": 365 * 24 * 60 * 60,    // 1 year
+	}
+
+	return durationMap[durationStr]
+
+}

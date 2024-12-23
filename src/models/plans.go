@@ -1,43 +1,84 @@
 package models
 
 import (
-	"errors"
 	"time"
 
 	"github.com/gofrs/uuid"
-	"gorm.io/datatypes"
-	"gorm.io/gorm"
 )
 
 type Plan struct {
-	ID           uuid.UUID      `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
-	Name         string         `gorm:"type:varchar(50);not null" json:"name"`
-	Description  string         `gorm:"type:text" json:"description"`
-	Price        float64        `gorm:"type:decimal(10,2);not null" json:"price"`
-	Features     datatypes.JSON `gorm:"type:jsonb" json:"features"` // JSON for flexible feature storage
-	CreatedAt    time.Time      `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt    time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
-	IsActive     bool           `gorm:"type:boolean;default:true" json:"is_active"`
-	Duration     string         `gorm:"type:varchar(50);not null;default:'1M'" json:"duration"` // Valid values: 1M, 6M, 12M
-	DurationDays int            `gorm:"type:int;not null" json:"duration_days"`                // Number of days for the plan
-	TrialPeriod  bool           `gorm:"type:boolean;default:true" json:"trial_period"`
+	ID                      uuid.UUID                `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+	Name                    string                   `gorm:"type:varchar(50);not null" json:"name"`
+	Description             string                   `gorm:"type:text" json:"description"`
+	Price                   float64                  `gorm:"type:decimal(10,2);not null" json:"price"`
+	IsActive                bool                     `gorm:"type:boolean;default:true" json:"is_active"`
+	TrialPeriod             bool                     `gorm:"type:boolean;default:true" json:"trial_period"`
+	PlanFeatureAssociations []PlanFeatureAssociation `gorm:"foreignKey:PlanID" json:"-"` // Corrected the field name
+	CreatedAt               time.Time                `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt               time.Time                `gorm:"autoUpdateTime" json:"updated_at"`
 }
 
-// BeforeSave is a GORM hook that validates the duration and calculates the number of days
-func (p *Plan) BeforeSave(tx *gorm.DB) (err error) {
-	validDurations := map[string]int{
-		"1M": 30,   // 1 Month = 30 Days
-		"6M": 180,  // 6 Months = 180 Days
-		"12M": 365, // 12 Months = 365 Days
-	}
+type PlanFeature struct {
+	ID                      uuid.UUID                `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+	Name                    string                   `gorm:"type:varchar(50);not null" json:"name"`
+	Description             string                   `gorm:"type:text" json:"description"`
+	PlanFeatureAssociations []PlanFeatureAssociation `gorm:"foreignKey:FeatureID" json:"-"` // Corrected the field name
+	CreatedAt               time.Time                `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt               time.Time                `gorm:"autoUpdateTime" json:"updated_at"`
+}
 
-	// Validate the duration
-	durationDays, isValid := validDurations[p.Duration]
-	if !isValid {
-		return errors.New("invalid duration value, must be '1M', '6M', or '12M'")
-	}
+type PlanFeatureAssociation struct {
+	PlanID    uuid.UUID   `gorm:"type:uuid;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;uniqueIndex:idx_plan_feature" json:"plan_id"`
+	FeatureID uuid.UUID   `gorm:"type:uuid;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;uniqueIndex:idx_plan_feature" json:"feature_id"`
+	Plan      Plan        `gorm:"foreignKey:PlanID" json:"plan"`
+	Feature   PlanFeature `gorm:"foreignKey:FeatureID" json:"feature"`
+	CreatedAt time.Time   `gorm:"autoCreateTime" json:"created_at"`
+	UpdatedAt time.Time   `gorm:"autoUpdateTime" json:"updated_at"`
+}
 
-	// Set the calculated duration days
-	p.DurationDays = durationDays
-	return nil
+type PlanResponse struct {
+	ID          uuid.UUID     `json:"id"`
+	Name        string        `json:"name"`
+	Description string        `json:"description"`
+	Price       float64       `json:"price"`
+	IsActive    bool          `json:"is_active"`
+	TrialPeriod bool          `json:"trial_period"`
+	Feature     []PlanFeature `json:"features"`
+	CreatedAt   time.Time     `json:"created_at"`
+	UpdatedAt   time.Time     `json:"updated_at"`
+}
+
+type AddPlanData struct {
+	Name        string  `json:"name" binding:"required"`
+	Description string  `json:"description" binding:"required"`
+	Price       float64 `json:"price" binding:"required"`
+	IsActive    bool    `json:"is_active" binding:"default=false"`
+	TrialPeriod bool    `json:"trial_period" binding:"required,default=false"`
+}
+
+type UpdatePlanData struct {
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	IsActive    bool    `json:"is_active"`
+	TrialPeriod bool    `json:"trial_period"`
+}
+
+type AddPlanFeatureData struct {
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description"`
+}
+
+type UpdatePlanFeatureData struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+type PlanFeatureResponse struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Plans       []Plan    `json:"plans"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }

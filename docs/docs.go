@@ -28,14 +28,7 @@ const docTemplate = `{
                     "Health"
                 ],
                 "summary": "Health check endpoint",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/main.Response"
-                        }
-                    }
-                }
+                "responses": {}
             }
         },
         "/api/v1/auth/google": {
@@ -227,7 +220,39 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CreateOrder"
+                            "$ref": "#/definitions/models_restaurant.CreateOrder"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/orders/dine": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new DineOrder",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DineOrders"
+                ],
+                "summary": "Create a new DineOrder",
+                "parameters": [
+                    {
+                        "description": "DineOrder data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models_dine.AddDineOrderData"
                         }
                     }
                 ],
@@ -313,6 +338,401 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/payments/dine/callback": {
+            "get": {
+                "description": "Handle Razorpay payment callback",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Razorpay payment callback",
+                "responses": {}
+            }
+        },
+        "/api/v1/payments/dine/{order_id}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new Payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Create a new Payment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "order_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/plans": {
+            "get": {
+                "description": "Get Plans",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Plans"
+                ],
+                "summary": "Get Plans",
+                "responses": {}
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new Plan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Plans"
+                ],
+                "summary": "Create a new Plan",
+                "parameters": [
+                    {
+                        "description": "Plan data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddPlanData"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/plans/add-feature": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add a feature to a Plan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Plans"
+                ],
+                "summary": "Add a feature to a Plan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Plan ID",
+                        "name": "plan_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Feature ID",
+                        "name": "feature_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/plans/all": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all Plans",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Plans"
+                ],
+                "summary": "Get all Plans",
+                "responses": {}
+            }
+        },
+        "/api/v1/plans/feature": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all PlanFeatures",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PlanFeatures"
+                ],
+                "summary": "Get all PlanFeatures",
+                "responses": {}
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new PlanFeatures",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PlanFeatures"
+                ],
+                "summary": "Create a new PlanFeatures",
+                "parameters": [
+                    {
+                        "description": "PlanFeatures data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddPlanFeatureData"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/plans/feature/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update a PlanFeatures",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PlanFeatures"
+                ],
+                "summary": "Update a PlanFeatures",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PlanFeatures ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "PlanFeatures data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdatePlanFeatureData"
+                        }
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a PlanFeatures by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PlanFeatures"
+                ],
+                "summary": "Delete a PlanFeatures",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PlanFeatures ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/plans/remove-feature": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Remove a feature from a Plan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Plans"
+                ],
+                "summary": "Remove a feature from a Plan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Plan ID",
+                        "name": "plan_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Feature ID",
+                        "name": "feature_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/plans/{id}": {
+            "get": {
+                "description": "Get a Plan by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Plans"
+                ],
+                "summary": "Get a Plan by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Plan ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update a Plan by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Plans"
+                ],
+                "summary": "Update a Plan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Plan ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Plan data",
+                        "name": "Plan",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdatePlanData"
+                        }
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a Plan by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Plans"
+                ],
+                "summary": "Delete a Plan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Plan ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {}
@@ -438,6 +858,45 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/subscriptions/{payment_id}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new subscription",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subscriptions"
+                ],
+                "summary": "Create a new subscription",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment ID",
+                        "name": "payment_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Subscription data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddSubscriptionData"
+                        }
                     }
                 ],
                 "responses": {}
@@ -783,75 +1242,9 @@ const docTemplate = `{
                 ],
                 "responses": {}
             }
-        },
-        "/api/v1/{restaurant_id}/menus/{menu_id}/categories/{category_id}/items/{menu_item_id}/options": {
-            "post": {
-                "description": "Create a new menu item option",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Create a new menu item option",
-                "parameters": [
-                    {
-                        "description": "Item data",
-                        "name": "item",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.AddMenuItemOptionData"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Menu Item ID",
-                        "name": "menu_item_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Category ID",
-                        "name": "category_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Menu ID",
-                        "name": "menu_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Restaurant ID",
-                        "name": "restaurant_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {}
-            }
         }
     },
     "definitions": {
-        "main.Response": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
         "models.AddMenuCategoryData": {
             "type": "object",
             "required": [
@@ -924,6 +1317,46 @@ const docTemplate = `{
                 }
             }
         },
+        "models.AddPlanData": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "price",
+                "trial_period"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "trial_period": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.AddPlanFeatureData": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "models.AddRestaurantData": {
             "type": "object",
             "properties": {
@@ -954,9 +1387,6 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "number_of_tables": {
-                    "type": "integer"
-                },
                 "phone": {
                     "type": "string"
                 },
@@ -965,74 +1395,15 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CreateOrder": {
+        "models.AddSubscriptionData": {
             "type": "object",
             "required": [
-                "customer_name",
-                "customer_phone",
-                "items",
-                "order_type",
-                "payment_type",
-                "restaurant_id"
+                "auto_renewal"
             ],
             "properties": {
-                "customer_email": {
-                    "type": "string"
-                },
-                "customer_name": {
-                    "type": "string"
-                },
-                "customer_phone": {
-                    "type": "string"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CreateOrderItem"
-                    }
-                },
-                "notes": {
-                    "type": "string"
-                },
-                "order_type": {
-                    "type": "string",
-                    "enum": [
-                        "DINEIN",
-                        "PICKUP",
-                        "DELIVERY"
-                    ]
-                },
-                "payment_type": {
-                    "type": "string",
-                    "enum": [
-                        "online",
-                        "onsite"
-                    ]
-                },
-                "restaurant_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.CreateOrderItem": {
-            "type": "object",
-            "required": [
-                "menu_item_id",
-                "quantity"
-            ],
-            "properties": {
-                "item_option_id": {
-                    "type": "string"
-                },
-                "item_option_name": {
-                    "type": "string"
-                },
-                "menu_item_id": {
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "integer",
-                    "minimum": 1
+                "auto_renewal": {
+                    "description": "Whether auto-renewal",
+                    "type": "boolean"
                 }
             }
         },
@@ -1074,6 +1445,37 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdatePlanData": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "trial_period": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.UpdatePlanFeatureData": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
@@ -1147,6 +1549,99 @@ const docTemplate = `{
                 },
                 "phone": {
                     "type": "string"
+                }
+            }
+        },
+        "models_dine.AddDineOrderData": {
+            "type": "object",
+            "required": [
+                "duration",
+                "plan_id",
+                "restaurant_id"
+            ],
+            "properties": {
+                "duration": {
+                    "type": "string"
+                },
+                "plan_id": {
+                    "type": "string"
+                },
+                "promo_code": {
+                    "type": "string"
+                },
+                "restaurant_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models_restaurant.CreateOrder": {
+            "type": "object",
+            "required": [
+                "customer_name",
+                "customer_phone",
+                "items",
+                "order_type",
+                "payment_type",
+                "restaurant_id"
+            ],
+            "properties": {
+                "customer_email": {
+                    "type": "string"
+                },
+                "customer_name": {
+                    "type": "string"
+                },
+                "customer_phone": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models_restaurant.CreateOrderItem"
+                    }
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "order_type": {
+                    "type": "string",
+                    "enum": [
+                        "DINEIN",
+                        "PICKUP",
+                        "DELIVERY"
+                    ]
+                },
+                "payment_type": {
+                    "type": "string",
+                    "enum": [
+                        "online",
+                        "onsite"
+                    ]
+                },
+                "restaurant_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models_restaurant.CreateOrderItem": {
+            "type": "object",
+            "required": [
+                "menu_item_id",
+                "quantity"
+            ],
+            "properties": {
+                "item_option_id": {
+                    "type": "string"
+                },
+                "item_option_name": {
+                    "type": "string"
+                },
+                "menu_item_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1
                 }
             }
         }

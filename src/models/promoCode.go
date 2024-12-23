@@ -1,6 +1,6 @@
 package models
 
-type PromoCode struct {
+type DinePromoCode struct {
 	ID           string  `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
 	Code         string  `gorm:"type:varchar(255);not null" json:"code"`
 	Discount     float64 `gorm:"type:decimal(10,2);not null" json:"discount"`

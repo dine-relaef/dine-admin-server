@@ -1,11 +1,4 @@
 definitions:
-  main.Response:
-    properties:
-      message:
-        type: string
-      status:
-        type: string
-    type: object
   models.AddMenuCategoryData:
     properties:
       description:
@@ -53,6 +46,33 @@ definitions:
     - name
     - price
     type: object
+  models.AddPlanData:
+    properties:
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      trial_period:
+        type: boolean
+    required:
+    - description
+    - name
+    - price
+    - trial_period
+    type: object
+  models.AddPlanFeatureData:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
   models.AddRestaurantData:
     properties:
       banner_image_url:
@@ -73,62 +93,18 @@ definitions:
         type: string
       name:
         type: string
-      number_of_tables:
-        type: integer
       phone:
         type: string
       pure_veg:
         type: boolean
     type: object
-  models.CreateOrder:
+  models.AddSubscriptionData:
     properties:
-      customer_email:
-        type: string
-      customer_name:
-        type: string
-      customer_phone:
-        type: string
-      items:
-        items:
-          $ref: '#/definitions/models.CreateOrderItem'
-        type: array
-      notes:
-        type: string
-      order_type:
-        enum:
-        - DINEIN
-        - PICKUP
-        - DELIVERY
-        type: string
-      payment_type:
-        enum:
-        - online
-        - onsite
-        type: string
-      restaurant_id:
-        type: string
+      auto_renewal:
+        description: Whether auto-renewal
+        type: boolean
     required:
-    - customer_name
-    - customer_phone
-    - items
-    - order_type
-    - payment_type
-    - restaurant_id
-    type: object
-  models.CreateOrderItem:
-    properties:
-      item_option_id:
-        type: string
-      item_option_name:
-        type: string
-      menu_item_id:
-        type: string
-      quantity:
-        minimum: 1
-        type: integer
-    required:
-    - menu_item_id
-    - quantity
+    - auto_renewal
     type: object
   models.Location:
     properties:
@@ -155,6 +131,26 @@ definitions:
       password:
         type: string
       phone:
+        type: string
+    type: object
+  models.UpdatePlanData:
+    properties:
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      trial_period:
+        type: boolean
+    type: object
+  models.UpdatePlanFeatureData:
+    properties:
+      description:
+        type: string
+      name:
         type: string
     type: object
   models.UpdateRestaurantData:
@@ -204,6 +200,71 @@ definitions:
       phone:
         type: string
     type: object
+  models_dine.AddDineOrderData:
+    properties:
+      duration:
+        type: string
+      plan_id:
+        type: string
+      promo_code:
+        type: string
+      restaurant_id:
+        type: string
+    required:
+    - duration
+    - plan_id
+    - restaurant_id
+    type: object
+  models_restaurant.CreateOrder:
+    properties:
+      customer_email:
+        type: string
+      customer_name:
+        type: string
+      customer_phone:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/models_restaurant.CreateOrderItem'
+        type: array
+      notes:
+        type: string
+      order_type:
+        enum:
+        - DINEIN
+        - PICKUP
+        - DELIVERY
+        type: string
+      payment_type:
+        enum:
+        - online
+        - onsite
+        type: string
+      restaurant_id:
+        type: string
+    required:
+    - customer_name
+    - customer_phone
+    - items
+    - order_type
+    - payment_type
+    - restaurant_id
+    type: object
+  models_restaurant.CreateOrderItem:
+    properties:
+      item_option_id:
+        type: string
+      item_option_name:
+        type: string
+      menu_item_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - menu_item_id
+    - quantity
+    type: object
 info:
   contact: {}
 paths:
@@ -214,11 +275,7 @@ paths:
       description: Health check endpoint
       produces:
       - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/main.Response'
+      responses: {}
       summary: Health check endpoint
       tags:
       - Health
@@ -354,44 +411,6 @@ paths:
       summary: Create a new menu item
       tags:
       - Menu Category Item
-  /api/v1/{restaurant_id}/menus/{menu_id}/categories/{category_id}/items/{menu_item_id}/options:
-    post:
-      consumes:
-      - application/json
-      description: Create a new menu item option
-      parameters:
-      - description: Item data
-        in: body
-        name: item
-        required: true
-        schema:
-          $ref: '#/definitions/models.AddMenuItemOptionData'
-      - description: Menu Item ID
-        in: path
-        name: menu_item_id
-        required: true
-        type: string
-      - description: Category ID
-        in: path
-        name: category_id
-        required: true
-        type: string
-      - description: Menu ID
-        in: path
-        name: menu_id
-        required: true
-        type: string
-      - description: Restaurant ID
-        in: path
-        name: restaurant_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses: {}
-      summary: Create a new menu item option
-      tags:
-      - Menu
   /api/v1/auth/google:
     get:
       consumes:
@@ -518,7 +537,7 @@ paths:
         name: order
         required: true
         schema:
-          $ref: '#/definitions/models.CreateOrder'
+          $ref: '#/definitions/models_restaurant.CreateOrder'
       produces:
       - application/json
       responses: {}
@@ -582,6 +601,281 @@ paths:
       summary: Update order status
       tags:
       - Orders
+  /api/v1/orders/dine:
+    post:
+      consumes:
+      - application/json
+      description: Create a new DineOrder
+      parameters:
+      - description: DineOrder data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_dine.AddDineOrderData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new DineOrder
+      tags:
+      - DineOrders
+  /api/v1/payments/dine/{order_id}:
+    post:
+      consumes:
+      - application/json
+      description: Create a new Payment
+      parameters:
+      - description: Order ID
+        in: path
+        name: order_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new Payment
+      tags:
+      - Payments
+  /api/v1/payments/dine/callback:
+    get:
+      consumes:
+      - application/json
+      description: Handle Razorpay payment callback
+      produces:
+      - application/json
+      responses: {}
+      summary: Razorpay payment callback
+      tags:
+      - Payments
+  /api/v1/plans:
+    get:
+      consumes:
+      - application/json
+      description: Get Plans
+      produces:
+      - application/json
+      responses: {}
+      summary: Get Plans
+      tags:
+      - Plans
+    post:
+      consumes:
+      - application/json
+      description: Create a new Plan
+      parameters:
+      - description: Plan data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddPlanData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new Plan
+      tags:
+      - Plans
+  /api/v1/plans/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a Plan by ID
+      parameters:
+      - description: Plan ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a Plan
+      tags:
+      - Plans
+    get:
+      consumes:
+      - application/json
+      description: Get a Plan by ID
+      parameters:
+      - description: Plan ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get a Plan by ID
+      tags:
+      - Plans
+    put:
+      consumes:
+      - application/json
+      description: Update a Plan by ID
+      parameters:
+      - description: Plan ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Plan data
+        in: body
+        name: Plan
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePlanData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update a Plan
+      tags:
+      - Plans
+  /api/v1/plans/add-feature:
+    put:
+      consumes:
+      - application/json
+      description: Add a feature to a Plan
+      parameters:
+      - description: Plan ID
+        in: query
+        name: plan_id
+        required: true
+        type: string
+      - description: Feature ID
+        in: query
+        name: feature_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Add a feature to a Plan
+      tags:
+      - Plans
+  /api/v1/plans/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all Plans
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all Plans
+      tags:
+      - Plans
+  /api/v1/plans/feature:
+    get:
+      consumes:
+      - application/json
+      description: Get all PlanFeatures
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all PlanFeatures
+      tags:
+      - PlanFeatures
+    post:
+      consumes:
+      - application/json
+      description: Create a new PlanFeatures
+      parameters:
+      - description: PlanFeatures data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddPlanFeatureData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new PlanFeatures
+      tags:
+      - PlanFeatures
+  /api/v1/plans/feature/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a PlanFeatures by ID
+      parameters:
+      - description: PlanFeatures ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a PlanFeatures
+      tags:
+      - PlanFeatures
+    put:
+      consumes:
+      - application/json
+      description: Update a PlanFeatures
+      parameters:
+      - description: PlanFeatures ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: PlanFeatures data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePlanFeatureData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update a PlanFeatures
+      tags:
+      - PlanFeatures
+  /api/v1/plans/remove-feature:
+    put:
+      consumes:
+      - application/json
+      description: Remove a feature from a Plan
+      parameters:
+      - description: Plan ID
+        in: query
+        name: plan_id
+        required: true
+        type: string
+      - description: Feature ID
+        in: query
+        name: feature_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Remove a feature from a Plan
+      tags:
+      - Plans
   /api/v1/restaurants:
     get:
       description: Retrieve all restaurants by User
@@ -668,6 +962,31 @@ paths:
       summary: Retrieve all restaurants
       tags:
       - Restaurant
+  /api/v1/subscriptions/{payment_id}:
+    post:
+      consumes:
+      - application/json
+      description: Create a new subscription
+      parameters:
+      - description: Payment ID
+        in: path
+        name: payment_id
+        required: true
+        type: string
+      - description: Subscription data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddSubscriptionData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new subscription
+      tags:
+      - Subscriptions
   /api/v1/users:
     get:
       description: Get the user information

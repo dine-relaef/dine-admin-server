@@ -118,6 +118,10 @@ func LoginUser(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+	if user.SignupSource != "website" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid login source"})
+		return
+	}
 
 	// Verify the password
 	if !utils.CheckPassword(user.Password, loginData.Password) {
@@ -209,6 +213,8 @@ func GoogleCallback(c *gin.Context) {
 		return
 	}
 	expectedState, _ := c.Cookie("oauth_state")
+	// Clear the state cookie
+	c.SetCookie("oauth_state", "", -1, "/", "", false, true)
 	if string(decodeStateURl) != expectedState {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid state parameter"})
 		return
@@ -249,6 +255,7 @@ func GoogleCallback(c *gin.Context) {
 			Email:         userInfo["email"].(string),
 			VerifiedEmail: userInfo["verified_email"].(bool),
 			ProfileImage:  userInfo["picture"].(string),
+			SignupSource:  "google",
 		}
 		if err := postgres.DB.Create(&user).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
