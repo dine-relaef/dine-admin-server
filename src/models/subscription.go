@@ -12,17 +12,17 @@ import (
 type Subscription struct {
 	ID                 uuid.UUID               `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
 	UserID             uuid.UUID               `gorm:"type:uuid;not null" json:"user_id"`
-	User               User                    `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE;" json:"user"`
+	User               User                    `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE;" json:"-"`
 	RestaurantID       uuid.UUID               `gorm:"type:uuid;not null" json:"restaurant_id"`
-	Restaurant         Restaurant              `gorm:"foreignKey:RestaurantID;constraint:OnDelete:CASCADE;" json:"restaurant"`
+	Restaurant         Restaurant              `gorm:"foreignKey:RestaurantID;constraint:OnDelete:CASCADE;" json:"-"`
 	PlanID             uuid.UUID               `gorm:"type:uuid;not null" json:"plan_id"`
-	Plan               Plan                    `gorm:"foreignKey:PlanID;" json:"plan"`
+	Plan               Plan                    `gorm:"foreignKey:PlanID;" json:"-"`
 	StartDate          time.Time               `gorm:"type:date;not null" json:"start_date"`
 	EndDate            time.Time               `gorm:"type:date;not null" json:"end_date"`
 	PaymentID          uuid.UUID               `gorm:"type:uuid;not null" json:"payment_id"`
-	Payment            models_dine.DinePayment `gorm:"foreignKey:PaymentID;" json:"payment"`
+	Payment            models_dine.DinePayment `gorm:"foreignKey:PaymentID;" json:"-"`
 	OrderID            uuid.UUID               `gorm:"type:uuid;not null" json:"order_id"`
-	Order              models_dine.DineOrder   `gorm:"foreignKey:OrderID;" json:"order"`
+	Order              models_dine.DineOrder   `gorm:"foreignKey:OrderID;" json:"-"`
 	AutoRenewal        bool                    `gorm:"type:boolean;default:false" json:"auto_renewal"`
 	RenewalDate        time.Time               `gorm:"type:date" json:"renewal_date"`
 	LastRenewalDate    time.Time               `gorm:"type:date" json:"last_renewal_date"`
