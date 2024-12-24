@@ -9,15 +9,25 @@ import (
 
 func SetupOrderRoutes(orderGroup *gin.RouterGroup) {
 
-	orderGroup.POST("", services_orders.CreateOrder)
-	orderGroup.GET("", services_orders.ListOrders)
-	orderGroup.GET("/:id", services_orders.GetOrder)
-	orderGroup.PUT("/:id/status", services_orders.UpdateOrderStatus)
-	orderGroup.POST("/:id/cancel", services_orders.CancelOrder)
+	restaurantOrderRoutes(orderGroup.Group("/restaurant"))
+	dineOrderRoutes(orderGroup.Group("/dine"))
 
-	orderGroup.POST("/dine", middleware.Authenticate, middleware.RoleMiddleware([]string{"restaurant_admin"}), services_orders.CreateDineOrder)
-	orderGroup.GET("/dine/all", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin"}), services_orders.GetDineOrders)
-	orderGroup.GET("/dine/:id", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin"}), services_orders.GetDineOrderByID)
-	orderGroup.GET("/dine", middleware.Authenticate, middleware.RoleMiddleware([]string{"restaurant_admin"}), services_orders.GetDineOrderByUsers)
+}
+
+func restaurantOrderRoutes(orderRestaurantGroup *gin.RouterGroup) {
+
+	orderRestaurantGroup.POST("/", services_orders.CreateOrder)
+	orderRestaurantGroup.GET("/", services_orders.ListOrders)
+	orderRestaurantGroup.GET("/:id", services_orders.GetOrder)
+	orderRestaurantGroup.PUT("/:id/status", services_orders.UpdateOrderStatus)
+	orderRestaurantGroup.POST("/:id/cancel", services_orders.CancelOrder)
+
+}
+
+func dineOrderRoutes(orderDineGroup *gin.RouterGroup) {
+
+	orderDineGroup.GET("/all", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin"}), services_orders.GetDineOrders)
+	orderDineGroup.GET("/:id", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin"}), services_orders.GetDineOrderByID)
+	orderDineGroup.GET("/", middleware.Authenticate, middleware.RoleMiddleware([]string{"restaurant_admin"}), services_orders.GetDineOrderByUsers)
 
 }

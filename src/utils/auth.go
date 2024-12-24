@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"menu-server/src/config/env"
-	"menu-server/src/models"
+	models_user "menu-server/src/models/users"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -23,7 +23,7 @@ func fetchEnvVar(key string) (string, error) {
 }
 
 // GenerateToken generates a JWT token with expiration.
-func GenerateToken(user models.UserJwt, jwtType string) (string, error) {
+func GenerateToken(user models_user.UserJwt, jwtType string) (string, error) {
 	// Fetch the secret key for the provided JWT type.
 	secretKey, err := fetchEnvVar(jwtType + "_TOKEN_SECRET")
 	if err != nil {

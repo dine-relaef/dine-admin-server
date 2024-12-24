@@ -99,7 +99,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LoginUserData"
+                            "$ref": "#/definitions/models_user.LoginUserData"
                         }
                     }
                 ],
@@ -164,14 +164,116 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.RegisterUserData"
+                            "$ref": "#/definitions/models_user.RegisterUserData"
                         }
                     }
                 ],
                 "responses": {}
             }
         },
-        "/api/v1/orders": {
+        "/api/v1/orders/dine": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get dine orders by restaurant admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dine Orders"
+                ],
+                "summary": "Get dine orders by restaurant admin",
+                "responses": {}
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new DineOrder",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dine Orders"
+                ],
+                "summary": "Create a new DineOrder",
+                "parameters": [
+                    {
+                        "description": "DineOrder data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models_order.AddDineOrderData"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/orders/dine/all": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all dine orders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dine Orders"
+                ],
+                "summary": "Get all dine orders",
+                "responses": {}
+            }
+        },
+        "/api/v1/orders/dine/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get dine order by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dine Orders"
+                ],
+                "summary": "Get dine order by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Dine Order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/orders/restaurant": {
             "get": {
                 "description": "Get list of orders for a specific restaurant",
                 "consumes": [
@@ -181,7 +283,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "Restaurant Orders"
                 ],
                 "summary": "List restaurant orders",
                 "parameters": [
@@ -210,7 +312,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "Restaurant Orders"
                 ],
                 "summary": "Create a new order",
                 "parameters": [
@@ -220,46 +322,14 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models_restaurant.CreateOrder"
+                            "$ref": "#/definitions/models_order.CreateOrder"
                         }
                     }
                 ],
                 "responses": {}
             }
         },
-        "/api/v1/orders/dine": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Create a new DineOrder",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DineOrders"
-                ],
-                "summary": "Create a new DineOrder",
-                "parameters": [
-                    {
-                        "description": "DineOrder data",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models_dine.AddDineOrderData"
-                        }
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/api/v1/orders/{id}": {
+        "/api/v1/orders/restaurant/{id}": {
             "get": {
                 "description": "Get detailed information about a specific order",
                 "consumes": [
@@ -269,7 +339,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "Restaurant Orders"
                 ],
                 "summary": "Get order details",
                 "parameters": [
@@ -284,7 +354,7 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/api/v1/orders/{id}/cancel": {
+        "/api/v1/orders/restaurant/{id}/cancel": {
             "post": {
                 "description": "Cancel an existing order",
                 "consumes": [
@@ -294,7 +364,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "Restaurant Orders"
                 ],
                 "summary": "Cancel order",
                 "parameters": [
@@ -309,7 +379,7 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/api/v1/orders/{id}/status": {
+        "/api/v1/orders/restaurant/{id}/status": {
             "put": {
                 "description": "Update the status of a specific order",
                 "consumes": [
@@ -319,7 +389,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Orders"
+                    "Restaurant Orders"
                 ],
                 "summary": "Update order status",
                 "parameters": [
@@ -356,36 +426,6 @@ const docTemplate = `{
                     "Payments"
                 ],
                 "summary": "Razorpay payment callback",
-                "responses": {}
-            }
-        },
-        "/api/v1/payments/dine/{order_id}": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Create a new Payment",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Payments"
-                ],
-                "summary": "Create a new Payment",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Order ID",
-                        "name": "order_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {}
             }
         },
@@ -428,7 +468,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AddPlanData"
+                            "$ref": "#/definitions/models_plan.AddPlanData"
                         }
                     }
                 ],
@@ -537,7 +577,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AddPlanFeatureData"
+                            "$ref": "#/definitions/models_plan.AddPlanFeatureData"
                         }
                     }
                 ],
@@ -576,7 +616,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UpdatePlanFeatureData"
+                            "$ref": "#/definitions/models_plan.UpdatePlanFeatureData"
                         }
                     }
                 ],
@@ -703,7 +743,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UpdatePlanData"
+                            "$ref": "#/definitions/models_plan.UpdatePlanData"
                         }
                     }
                 ],
@@ -733,6 +773,38 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/promo-code/dine": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new DinePromoCode",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dine Promo Codes"
+                ],
+                "summary": "Create a new DinePromoCode",
+                "parameters": [
+                    {
+                        "description": "DinePromoCode data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models_promoCode.AddDinePromoCode"
+                        }
                     }
                 ],
                 "responses": {}
@@ -769,7 +841,39 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AddRestaurantData"
+                            "$ref": "#/definitions/models_restaurant.AddRestaurantData"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/restaurants/bank-account": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Connect a restaurant's bank account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant Bank Account"
+                ],
+                "summary": "Connect a restaurant's bank account",
+                "parameters": [
+                    {
+                        "description": "Bank account data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models_restaurant.AddBankAccount"
                         }
                     }
                 ],
@@ -836,7 +940,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UpdateRestaurantData"
+                            "$ref": "#/definitions/models_restaurant.UpdateRestaurantData"
                         }
                     }
                 ],
@@ -855,6 +959,57 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Restaurant ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/subscriptions": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all subscriptions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subscriptions"
+                ],
+                "summary": "Get all subscriptions",
+                "responses": {}
+            }
+        },
+        "/api/v1/subscriptions/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get subscription by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subscriptions"
+                ],
+                "summary": "Get subscription by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Subscription ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -895,7 +1050,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AddSubscriptionData"
+                            "$ref": "#/definitions/models_subscription.AddSubscriptionData"
                         }
                     }
                 ],
@@ -940,7 +1095,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UpdateUserDataByUser"
+                            "$ref": "#/definitions/models_user.UpdateUserDataByUser"
                         }
                     }
                 ],
@@ -1019,7 +1174,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UpdateUserDataByAdmin"
+                            "$ref": "#/definitions/models_user.UpdateUserDataByAdmin"
                         }
                     }
                 ],
@@ -1048,6 +1203,59 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
+                "responses": {}
+            }
+        },
+        "/api/v1/workflow/plan/order-payment": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a dine order and payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Workflow"
+                ],
+                "summary": "Create a dine order and payment",
+                "parameters": [
+                    {
+                        "description": "DineOrder data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models_order.AddDineOrderData"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/workflow/plan/payment-subscription": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Verify a payment and create a dine subscription",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Workflow"
+                ],
+                "summary": "Verify a payment and create a dine subscription",
                 "responses": {}
             }
         },
@@ -1091,7 +1299,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AddMenuData"
+                            "$ref": "#/definitions/models_menu.AddMenuData"
                         }
                     },
                     {
@@ -1154,7 +1362,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AddMenuCategoryData"
+                            "$ref": "#/definitions/models_menu.AddMenuCategoryData"
                         }
                     },
                     {
@@ -1197,7 +1405,7 @@ const docTemplate = `{
                 "responses": {}
             },
             "post": {
-                "description": "Create a new menu item",
+                "description": "Create multiple menu items",
                 "consumes": [
                     "application/json"
                 ],
@@ -1207,15 +1415,18 @@ const docTemplate = `{
                 "tags": [
                     "Menu Category Item"
                 ],
-                "summary": "Create a new menu item",
+                "summary": "Create multiple menu items",
                 "parameters": [
                     {
-                        "description": "Item data",
-                        "name": "item",
+                        "description": "Items data",
+                        "name": "items",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AddMenuItemData"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models_menu.AddMenuItemData"
+                            }
                         }
                     },
                     {
@@ -1245,7 +1456,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.AddMenuCategoryData": {
+        "models_menu.AddMenuCategoryData": {
             "type": "object",
             "required": [
                 "name"
@@ -1262,7 +1473,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AddMenuData": {
+        "models_menu.AddMenuData": {
             "type": "object",
             "required": [
                 "name"
@@ -1273,7 +1484,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AddMenuItemData": {
+        "models_menu.AddMenuItemData": {
             "type": "object",
             "required": [
                 "name"
@@ -1297,12 +1508,12 @@ const docTemplate = `{
                 "options": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.AddMenuItemOptionData"
+                        "$ref": "#/definitions/models_menu.AddMenuItemOptionData"
                     }
                 }
             }
         },
-        "models.AddMenuItemOptionData": {
+        "models_menu.AddMenuItemOptionData": {
             "type": "object",
             "required": [
                 "name",
@@ -1317,242 +1528,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AddPlanData": {
-            "type": "object",
-            "required": [
-                "description",
-                "name",
-                "price",
-                "trial_period"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "trial_period": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.AddPlanFeatureData": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.AddRestaurantData": {
-            "type": "object",
-            "properties": {
-                "banner_image_url": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "has_delivery": {
-                    "type": "boolean"
-                },
-                "has_parking": {
-                    "type": "boolean"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "location": {
-                    "$ref": "#/definitions/models.Location"
-                },
-                "logo_image_url": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "pure_veg": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.AddSubscriptionData": {
-            "type": "object",
-            "required": [
-                "auto_renewal"
-            ],
-            "properties": {
-                "auto_renewal": {
-                    "description": "Whether auto-renewal",
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.Location": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.LoginUserData": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.RegisterUserData": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.UpdatePlanData": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "trial_period": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.UpdatePlanFeatureData": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.UpdateRestaurantData": {
-            "type": "object",
-            "properties": {
-                "banner_image_url": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "has_delivery": {
-                    "type": "boolean"
-                },
-                "has_parking": {
-                    "type": "boolean"
-                },
-                "is_active": {
-                    "type": "boolean"
-                },
-                "location": {
-                    "$ref": "#/definitions/models.Location"
-                },
-                "logo_image_url": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "number_of_tables": {
-                    "type": "integer"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "pure_veg": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.UpdateUserDataByAdmin": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.UpdateUserDataByUser": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "models_dine.AddDineOrderData": {
+        "models_order.AddDineOrderData": {
             "type": "object",
             "required": [
                 "duration",
@@ -1574,7 +1550,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models_restaurant.CreateOrder": {
+        "models_order.CreateOrder": {
             "type": "object",
             "required": [
                 "customer_name",
@@ -1597,7 +1573,7 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models_restaurant.CreateOrderItem"
+                        "$ref": "#/definitions/models_order.CreateOrderItem"
                     }
                 },
                 "notes": {
@@ -1623,7 +1599,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models_restaurant.CreateOrderItem": {
+        "models_order.CreateOrderItem": {
             "type": "object",
             "required": [
                 "menu_item_id",
@@ -1642,6 +1618,311 @@ const docTemplate = `{
                 "quantity": {
                     "type": "integer",
                     "minimum": 1
+                }
+            }
+        },
+        "models_plan.AddPlanData": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "price",
+                "trial_period"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "trial_period": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models_plan.AddPlanFeatureData": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models_plan.UpdatePlanData": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "trial_period": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models_plan.UpdatePlanFeatureData": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models_promoCode.AddDinePromoCode": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "days": {
+                    "type": "integer"
+                },
+                "discount": {
+                    "type": "number"
+                },
+                "discount_type": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "max_uses": {
+                    "type": "integer"
+                },
+                "plan_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models_restaurant.AddBankAccount": {
+            "type": "object",
+            "properties": {
+                "account_holder": {
+                    "type": "string"
+                },
+                "account_number": {
+                    "type": "string"
+                },
+                "bank_name": {
+                    "type": "string"
+                },
+                "branch": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "ifsc_code": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "restaurant_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models_restaurant.AddRestaurantData": {
+            "type": "object",
+            "properties": {
+                "banner_image_url": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "has_delivery": {
+                    "type": "boolean"
+                },
+                "has_parking": {
+                    "type": "boolean"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "$ref": "#/definitions/models_restaurant.Location"
+                },
+                "logo_image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "pure_veg": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models_restaurant.Location": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "post_code": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "state_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "models_restaurant.UpdateRestaurantData": {
+            "type": "object",
+            "properties": {
+                "banner_image_url": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "has_delivery": {
+                    "type": "boolean"
+                },
+                "has_parking": {
+                    "type": "boolean"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "$ref": "#/definitions/models_restaurant.Location"
+                },
+                "logo_image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "number_of_tables": {
+                    "type": "integer"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "pure_veg": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models_subscription.AddSubscriptionData": {
+            "type": "object",
+            "required": [
+                "auto_renewal"
+            ],
+            "properties": {
+                "auto_renewal": {
+                    "description": "Whether auto-renewal",
+                    "type": "boolean"
+                }
+            }
+        },
+        "models_user.LoginUserData": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models_user.RegisterUserData": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models_user.UpdateUserDataByAdmin": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models_user.UpdateUserDataByUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
                 }
             }
         }

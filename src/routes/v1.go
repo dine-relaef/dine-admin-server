@@ -17,4 +17,6 @@ func V1Routes(r *gin.Engine) {
 	routes_v1.SetupPaymentRoutes(v1.Group("/payments"))
 	routes_v1.SetupOrderRoutes(v1.Group("/orders"))
 	routes_v1.SetupMenuRoutes(v1.Group("/:restaurant_id/menus"))
+	routes_v1.SetupPromoCodeRoutes(v1.Group("/promo-code"))
+	routes_v1.SetupWorkflowRoutes(v1.Group("/workflow"))
 }

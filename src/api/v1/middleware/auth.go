@@ -2,7 +2,7 @@ package middleware
 
 import (
 	postgres "menu-server/src/config/database"
-	"menu-server/src/models"
+	models_user "menu-server/src/models/users"
 	"menu-server/src/utils"
 	"net/http"
 	"os"
@@ -49,13 +49,13 @@ func Authenticate(c *gin.Context) {
 		}
 
 		// Generate new access and refresh tokens
-		newAccessToken, err := utils.GenerateToken(models.UserJwt{ID: userID, Role: role}, "ACCESS")
+		newAccessToken, err := utils.GenerateToken(models_user.UserJwt{ID: userID, Role: role}, "ACCESS")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate new access tokens"})
 			c.Abort()
 			return
 		}
-		newRefreshToken, err := utils.GenerateToken(models.UserJwt{ID: userID, Role: role}, "REFRESH")
+		newRefreshToken, err := utils.GenerateToken(models_user.UserJwt{ID: userID, Role: role}, "REFRESH")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate new refresh tokens"})
 			c.Abort()
@@ -84,7 +84,7 @@ func Authenticate(c *gin.Context) {
 	}
 
 	// Verify the user exists in the database
-	var user models.User
+	var user models_user.User
 	if err := postgres.DB.Where("id = ?", userID).First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
 		c.Abort()

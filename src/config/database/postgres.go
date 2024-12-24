@@ -2,10 +2,16 @@ package postgres
 
 import (
 	"log"
-	"menu-server/src/config/env"
-	"menu-server/src/models" // Adjust to the actual path
-	models_dine "menu-server/src/models/dine"
-	models_restaurant "menu-server/src/models/restaurant"
+	"menu-server/src/config/env" // Adjust to the actual path
+	models_common "menu-server/src/models/Common"
+	models_menu "menu-server/src/models/menu"
+	models_order "menu-server/src/models/orders"
+	models_payment "menu-server/src/models/payments"
+	models_plan "menu-server/src/models/plans"
+	models_promoCode "menu-server/src/models/promoCode"
+	models_restaurant "menu-server/src/models/restaurants"
+	models_subscription "menu-server/src/models/subscriptions"
+	models_user "menu-server/src/models/users"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,20 +22,28 @@ var DB *gorm.DB
 
 // Aliased models for brevity
 type (
-	Plan                = models.Plan
-	User                = models.User
-	Restaurant          = models.Restaurant
-	Menu                = models.Menu
-	MenuItem            = models.MenuItem
-	MenuCategory        = models.MenuCategory
-	MenuItemOption      = models.MenuItemOption
-	RestaurantOrder     = models_restaurant.Order
-	DinePayment         = models_dine.DinePayment
-	Subscription        = models.Subscription
-	RestaurantOrderItem = models_restaurant.OrderItem
+	Plan                  = models_plan.Plan
+	User                  = models_user.User
+	Restaurant            = models_restaurant.Restaurant
+	RestaurantBankAccount = models_restaurant.RestaurantBankAccount
+	Menu                  = models_menu.Menu
+	MenuItem              = models_menu.MenuItem
+	MenuCategory          = models_menu.MenuCategory
 
-	PlanFeature            = models.PlanFeature
-	PlanFeatureAssociation = models.PlanFeatureAssociation
+	MenuItemOption  = models_menu.MenuItemOption
+	RestaurantOrder = models_order.Order
+	DinePayment     = models_payment.DinePayment
+
+	DineOrder           = models_order.DineOrder
+	Subscription        = models_subscription.Subscription
+	RestaurantOrderItem = models_order.OrderItem
+
+	PlanFeature            = models_plan.PlanFeature
+	PlanFeatureAssociation = models_plan.PlanFeatureAssociation
+
+	RestaurantsCount = models_common.RestaurantsCount
+
+	DinePromoCode = models_promoCode.DinePromoCode
 )
 
 // InitDB initializes the PostgreSQL database connection and runs migrations.
@@ -52,14 +66,20 @@ func InitDB() {
 		log.Fatalf("Failed to ensure UUID extension: %v", err)
 	}
 	// Drop table
-	// DB.Migrator().DropTable(&Subscription{})
-	// DB.Migrator().DropColumn(&models.Plan{}, "duration")
+	// DB.Migrator().DropTable( &DinePromoCode{})
+	// DB.Migrator().DropColumn(&models.DinePromoCode{}, "duration")
 	// Run migrations for all models
 	if err := migrateModels(); err != nil {
 		log.Fatalf("Failed to migrate database schema: %v", err)
 	}
 
+	// Generate common tables
+
 	log.Println("Database initialized successfully")
+}
+
+func GenrateCommonTable(table interface{}) {
+	DB.Create(&table)
 }
 
 // ensureUUIDExtension ensures the "uuid-ossp" PostgreSQL extension exists.
@@ -78,10 +98,14 @@ func migrateModels() error {
 		&Menu{},
 		&MenuCategory{},
 		&MenuItem{},
+		&DineOrder{},
 		&MenuItemOption{},
 		&RestaurantOrder{},
 		&RestaurantOrderItem{},
 		&DinePayment{},
 		&Subscription{},
+		&RestaurantsCount{},
+		&RestaurantBankAccount{},
+		&DinePromoCode{},
 	)
 }

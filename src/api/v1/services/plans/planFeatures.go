@@ -2,7 +2,7 @@ package services_plan
 
 import (
 	postgres "menu-server/src/config/database"
-	"menu-server/src/models"
+	models_plan "menu-server/src/models/plans"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,10 +15,10 @@ import (
 // @Accept  json
 // @Produce  json
 // @Security ApiKeyAuth
-// @Param input body models.AddPlanFeatureData true "PlanFeatures data"
+// @Param input body models_plan.AddPlanFeatureData true "PlanFeatures data"
 // @Router /api/v1/plans/feature [post]
 func CreatePlanFeatures(c *gin.Context) {
-	var PlanFeatures models.PlanFeature
+	var PlanFeatures models_plan.PlanFeature
 
 	if err := c.ShouldBindJSON(&PlanFeatures); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -45,7 +45,7 @@ func CreatePlanFeatures(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Router /api/v1/plans/feature [get]
 func GetAllPlanFeatures(c *gin.Context) {
-	var PlanFeatures []models.PlanFeature
+	var PlanFeatures []models_plan.PlanFeature
 
 	if err := postgres.DB.Preload("PlanFeatureAssociations.Plan").Find(&PlanFeatures).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve PlanFeatures"})
@@ -53,14 +53,14 @@ func GetAllPlanFeatures(c *gin.Context) {
 	}
 
 	if len(PlanFeatures) == 0 {
-		c.JSON(http.StatusOK, gin.H{"PlanFeatures": []models.PlanFeature{}})
+		c.JSON(http.StatusOK, gin.H{"PlanFeatures": []models_plan.PlanFeature{}})
 		return
 	}
 
-	var featuresResponse []models.PlanFeatureResponse
+	var featuresResponse []models_plan.PlanFeatureResponse
 
 	for _, feature := range PlanFeatures {
-		var featureResponse models.PlanFeatureResponse
+		var featureResponse models_plan.PlanFeatureResponse
 		featureResponse.ID = feature.ID
 		featureResponse.Name = feature.Name
 		featureResponse.Description = feature.Description
@@ -69,7 +69,7 @@ func GetAllPlanFeatures(c *gin.Context) {
 
 		for _, association := range feature.PlanFeatureAssociations {
 
-			featureResponse.Plans = append(featureResponse.Plans, models.Plan{
+			featureResponse.Plans = append(featureResponse.Plans, models_plan.Plan{
 				ID:          association.Plan.ID,
 				Name:        association.Plan.Name,
 				Description: association.Plan.Description,
@@ -95,19 +95,19 @@ func GetAllPlanFeatures(c *gin.Context) {
 // @Produce  json
 // @Security ApiKeyAuth
 // @Param id path string true "PlanFeatures ID"
-// @Param input body models.UpdatePlanFeatureData true "PlanFeatures data"
+// @Param input body models_plan.UpdatePlanFeatureData true "PlanFeatures data"
 // @Router /api/v1/plans/feature/{id} [put]
 func UpdatePlanFeatures(c *gin.Context) {
 
 	id := c.Param("id")
-	var PlanFeatures models.PlanFeature
+	var PlanFeatures models_plan.PlanFeature
 
 	if err := postgres.DB.First(&PlanFeatures, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "PlanFeatures not found"})
 		return
 	}
 
-	var input models.PlanFeature
+	var input models_plan.PlanFeature
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -135,7 +135,7 @@ func UpdatePlanFeatures(c *gin.Context) {
 // @Router /api/v1/plans/feature/{id} [delete]
 func DeletePlanFeatures(c *gin.Context) {
 	id := c.Param("id")
-	if err := postgres.DB.Delete(&models.PlanFeature{}, "id = ?", id).Error; err != nil {
+	if err := postgres.DB.Delete(&models_plan.PlanFeature{}, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete PlanFeatures"})
 		return
 	}

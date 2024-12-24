@@ -1,9 +1,12 @@
 package services_orders
 
 import (
+	"fmt"
 	postgres "menu-server/src/config/database"
-	models "menu-server/src/models"
-	models_dine "menu-server/src/models/dine"
+	models_order "menu-server/src/models/orders"
+	models_plan "menu-server/src/models/plans"
+	models_promoCode "menu-server/src/models/promoCode"
+	models_restaurant "menu-server/src/models/restaurants"
 	"net/http"
 	"time"
 
@@ -14,56 +17,71 @@ import (
 // CreateDineOrder handles the creation of a new DineOrder
 // @Summary Create a new DineOrder
 // @Description Create a new DineOrder
-// @Tags DineOrders
+// @Tags Dine Orders
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param input body models_dine.AddDineOrderData true "DineOrder data"
+// @Param input body models_order.AddDineOrderData true "DineOrder data"
 // @Router /api/v1/orders/dine [post]
-func CreateDineOrder(c *gin.Context) {
-	var input models_dine.AddDineOrderData
+func CreateDineOrder(c *gin.Context) error {
+	var input models_order.AddDineOrderData
 
 	restaurant_admin_id, _ := c.Get("userID")
 
 	// Bind the JSON input to the DTO
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+
+		return err
+
 	}
 
-	var Restaurant models.Restaurant
+	var Restaurant models_restaurant.Restaurant
 	if err := postgres.DB.Where("id = ? AND admin_id = ?", input.RestaurantID, restaurant_admin_id).First(&Restaurant).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
+		return err
 	}
 
-	var Plan models.Plan
+	var Plan models_plan.Plan
 	if err := postgres.DB.First(&Plan, "id = ?", input.PlanID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Plan not found"})
-		return
+		return fmt.Errorf("plan not found")
 	}
 
-	var PromoCode models.DinePromoCode
+	var PromoCode models_promoCode.DinePromoCode
 	var DiscountAmount float64
 	if input.PromoCode != "" {
 		if err := postgres.DB.Where("code = ?", input.PromoCode).First(&PromoCode).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Promo code not found"})
-			return
+			return fmt.Errorf("promo code not found")
 		}
 
-		validFrom, err := time.Parse(time.RFC3339, PromoCode.ValidFrom)
+		PlanIDs, err := PromoCode.GetPlanIDs()
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ValidFrom date format"})
-			return
+			return fmt.Errorf("failed to get plan ids")
 		}
-		validTo, err := time.Parse(time.RFC3339, PromoCode.ValidTo)
+
+		planExist := false
+		for _, planID := range PlanIDs {
+			if planID == Plan.ID {
+				planExist = true
+				break
+			}
+		}
+
+		if !planExist {
+			return fmt.Errorf("promo code is not applicable to this plan")
+		}
+
+		layout := "2006-01-02T15:04:05Z"
+
+		validFrom, err := time.Parse(layout, PromoCode.ValidFrom)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ValidTo date format"})
-			return
+			return fmt.Errorf("invalid promo code valid from date")
 		}
-		if !PromoCode.IsActive && validFrom.Before(time.Now()) && validTo.After(time.Now()) && PromoCode.MaxUses > 0 {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Promo code is not active"})
-			return
+
+		validTo, err := time.Parse(layout, PromoCode.ValidTo)
+		if err != nil {
+			return fmt.Errorf("invalid promo code valid to date")
+		}
+		if !PromoCode.IsActive || validFrom.Before(time.Now()) || validTo.After(time.Now()) || PromoCode.MaxUses <= 0 {
+			return fmt.Errorf("promo code is not applicable")
 		}
 
 		if PromoCode.DiscountType == "percentage" {
@@ -72,14 +90,15 @@ func CreateDineOrder(c *gin.Context) {
 			DiscountAmount = PromoCode.Discount
 		}
 
-		PromoCode.MaxUses -= 1
-		if err := postgres.DB.Save(&PromoCode).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update promo code"})
-			return
+		if PromoCode.MaxUses > 0 {
+			PromoCode.MaxUses -= 1
+			if err := postgres.DB.Save(&PromoCode).Error; err != nil {
+				return fmt.Errorf("failed to update promo code")
+			}
 		}
 	}
 
-	var DineOrder = models_dine.DineOrder{
+	var DineOrder = models_order.DineOrder{
 		RestaurantID:      input.RestaurantID,
 		PlanID:            input.PlanID,
 		PromoCode:         input.PromoCode,
@@ -91,19 +110,25 @@ func CreateDineOrder(c *gin.Context) {
 	}
 
 	if err := postgres.DB.Create(&DineOrder).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create dine order"})
-		return
+		return fmt.Errorf("failed to create dine order")
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message":    "Dine order created successfully",
-		"dine_order": DineOrder,
-	})
+	c.Set("orderID", DineOrder.ID.String())
+
+	return nil
 
 }
 
+// GetDineOrders retrieves all dine orders
+// @Summary Get all dine orders
+// @Description Get all dine orders
+// @Tags Dine Orders
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Router /api/v1/orders/dine/all [get]
 func GetDineOrders(c *gin.Context) {
-	var dineOrders []models_dine.DineOrder
+	var dineOrders []models_order.DineOrder
 
 	if err := postgres.DB.Find(&dineOrders).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve dine orders"})
@@ -113,9 +138,18 @@ func GetDineOrders(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Dine orders found", "dine_orders": dineOrders})
 }
 
+// GetDineOrderByID retrieves a dine order by ID
+// @Summary Get dine order by ID
+// @Description Get dine order by ID
+// @Tags Dine Orders
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path string true "Dine Order ID"
+// @Router /api/v1/orders/dine/{id} [get]
 func GetDineOrderByID(c *gin.Context) {
 	id := c.Param("id")
-	var dineOrder models_dine.DineOrder
+	var dineOrder models_order.DineOrder
 
 	if err := postgres.DB.First(&dineOrder, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Dine order not found"})
@@ -125,8 +159,16 @@ func GetDineOrderByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"dine_order": dineOrder})
 }
 
+// GetDineOrderByUsers retrieves dine orders by restaurant admin
+// @Summary Get dine orders by restaurant admin
+// @Description Get dine orders by restaurant admin
+// @Tags Dine Orders
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Router /api/v1/orders/dine [get]
 func GetDineOrderByUsers(c *gin.Context) {
-	var dineOrders []models_dine.DineOrder
+	var dineOrders []models_order.DineOrder
 
 	restaurant_admin_id, _ := c.Get("user_id")
 	restaurantAdminIDStr, _ := restaurant_admin_id.(string)

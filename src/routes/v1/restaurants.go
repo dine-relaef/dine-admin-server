@@ -1,7 +1,8 @@
 package routes_v1
+
 import (
 	middleware "menu-server/src/api/v1/middleware"
-	services "menu-server/src/api/v1/services"
+	services "menu-server/src/api/v1/services/restaurants"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,5 +17,7 @@ func SetupRestaurantRoutes(RestaurantRoutes *gin.RouterGroup) {
 	RestaurantRoutes.PUT("/:id", middleware.Authenticate, services.UpdateRestaurant) // Update a Restaurant by ID
 
 	RestaurantRoutes.DELETE("/:id", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin", "restaurant_admin"}), services.DeleteRestaurant) // Delete a Restaurant by ID
+
+	RestaurantRoutes.POST("/bank-account", services.ConnectRestaurantBankAccount)
 
 }

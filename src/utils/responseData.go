@@ -1,13 +1,13 @@
 package utils
 
 import (
-	models "menu-server/src/models"
+	models_restaurant "menu-server/src/models/restaurants"
 )
 
-func RestaurantResponse(restaurant []models.Restaurant) []models.ResponseRestaurantData {
-	var res_restaurants []models.ResponseRestaurantData
+func RestaurantResponse(restaurant []models_restaurant.Restaurant) []models_restaurant.ResponseRestaurantData {
+	var res_restaurants []models_restaurant.ResponseRestaurantData
 	for _, r := range restaurant {
-		res_restaurants = append(res_restaurants, models.ResponseRestaurantData{
+		res_restaurants = append(res_restaurants, models_restaurant.ResponseRestaurantData{
 			ID:             r.ID,
 			Name:           r.Name,
 			PureVeg:        r.PureVeg,

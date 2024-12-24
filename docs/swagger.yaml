@@ -1,5 +1,5 @@
 definitions:
-  models.AddMenuCategoryData:
+  models_menu.AddMenuCategoryData:
     properties:
       description:
         type: string
@@ -10,14 +10,14 @@ definitions:
     required:
     - name
     type: object
-  models.AddMenuData:
+  models_menu.AddMenuData:
     properties:
       name:
         type: string
     required:
     - name
     type: object
-  models.AddMenuItemData:
+  models_menu.AddMenuItemData:
     properties:
       description:
         type: string
@@ -31,12 +31,12 @@ definitions:
         type: string
       options:
         items:
-          $ref: '#/definitions/models.AddMenuItemOptionData'
+          $ref: '#/definitions/models_menu.AddMenuItemOptionData'
         type: array
     required:
     - name
     type: object
-  models.AddMenuItemOptionData:
+  models_menu.AddMenuItemOptionData:
     properties:
       name:
         type: string
@@ -46,161 +46,7 @@ definitions:
     - name
     - price
     type: object
-  models.AddPlanData:
-    properties:
-      description:
-        type: string
-      is_active:
-        type: boolean
-      name:
-        type: string
-      price:
-        type: number
-      trial_period:
-        type: boolean
-    required:
-    - description
-    - name
-    - price
-    - trial_period
-    type: object
-  models.AddPlanFeatureData:
-    properties:
-      description:
-        type: string
-      name:
-        type: string
-    required:
-    - name
-    type: object
-  models.AddRestaurantData:
-    properties:
-      banner_image_url:
-        type: string
-      description:
-        type: string
-      email:
-        type: string
-      has_delivery:
-        type: boolean
-      has_parking:
-        type: boolean
-      is_active:
-        type: boolean
-      location:
-        $ref: '#/definitions/models.Location'
-      logo_image_url:
-        type: string
-      name:
-        type: string
-      phone:
-        type: string
-      pure_veg:
-        type: boolean
-    type: object
-  models.AddSubscriptionData:
-    properties:
-      auto_renewal:
-        description: Whether auto-renewal
-        type: boolean
-    required:
-    - auto_renewal
-    type: object
-  models.Location:
-    properties:
-      address:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-    type: object
-  models.LoginUserData:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-    type: object
-  models.RegisterUserData:
-    properties:
-      email:
-        type: string
-      name:
-        type: string
-      password:
-        type: string
-      phone:
-        type: string
-    type: object
-  models.UpdatePlanData:
-    properties:
-      description:
-        type: string
-      is_active:
-        type: boolean
-      name:
-        type: string
-      price:
-        type: number
-      trial_period:
-        type: boolean
-    type: object
-  models.UpdatePlanFeatureData:
-    properties:
-      description:
-        type: string
-      name:
-        type: string
-    type: object
-  models.UpdateRestaurantData:
-    properties:
-      banner_image_url:
-        type: string
-      description:
-        type: string
-      email:
-        type: string
-      has_delivery:
-        type: boolean
-      has_parking:
-        type: boolean
-      is_active:
-        type: boolean
-      location:
-        $ref: '#/definitions/models.Location'
-      logo_image_url:
-        type: string
-      name:
-        type: string
-      number_of_tables:
-        type: integer
-      phone:
-        type: string
-      pure_veg:
-        type: boolean
-    type: object
-  models.UpdateUserDataByAdmin:
-    properties:
-      email:
-        type: string
-      name:
-        type: string
-      phone:
-        type: string
-    type: object
-  models.UpdateUserDataByUser:
-    properties:
-      email:
-        type: string
-      name:
-        type: string
-      password:
-        type: string
-      phone:
-        type: string
-    type: object
-  models_dine.AddDineOrderData:
+  models_order.AddDineOrderData:
     properties:
       duration:
         type: string
@@ -215,7 +61,7 @@ definitions:
     - plan_id
     - restaurant_id
     type: object
-  models_restaurant.CreateOrder:
+  models_order.CreateOrder:
     properties:
       customer_email:
         type: string
@@ -225,7 +71,7 @@ definitions:
         type: string
       items:
         items:
-          $ref: '#/definitions/models_restaurant.CreateOrderItem'
+          $ref: '#/definitions/models_order.CreateOrderItem'
         type: array
       notes:
         type: string
@@ -250,7 +96,7 @@ definitions:
     - payment_type
     - restaurant_id
     type: object
-  models_restaurant.CreateOrderItem:
+  models_order.CreateOrderItem:
     properties:
       item_option_id:
         type: string
@@ -264,6 +110,206 @@ definitions:
     required:
     - menu_item_id
     - quantity
+    type: object
+  models_plan.AddPlanData:
+    properties:
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      trial_period:
+        type: boolean
+    required:
+    - description
+    - name
+    - price
+    - trial_period
+    type: object
+  models_plan.AddPlanFeatureData:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  models_plan.UpdatePlanData:
+    properties:
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      trial_period:
+        type: boolean
+    type: object
+  models_plan.UpdatePlanFeatureData:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  models_promoCode.AddDinePromoCode:
+    properties:
+      code:
+        type: string
+      days:
+        type: integer
+      discount:
+        type: number
+      discount_type:
+        type: string
+      is_active:
+        type: boolean
+      max_uses:
+        type: integer
+      plan_ids:
+        items:
+          type: string
+        type: array
+    type: object
+  models_restaurant.AddBankAccount:
+    properties:
+      account_holder:
+        type: string
+      account_number:
+        type: string
+      bank_name:
+        type: string
+      branch:
+        type: string
+      email:
+        type: string
+      ifsc_code:
+        type: string
+      phone:
+        type: string
+      restaurant_id:
+        type: string
+    type: object
+  models_restaurant.AddRestaurantData:
+    properties:
+      banner_image_url:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      has_delivery:
+        type: boolean
+      has_parking:
+        type: boolean
+      is_active:
+        type: boolean
+      location:
+        $ref: '#/definitions/models_restaurant.Location'
+      logo_image_url:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      pure_veg:
+        type: boolean
+    type: object
+  models_restaurant.Location:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      post_code:
+        type: string
+      state:
+        type: string
+      state_code:
+        type: string
+    type: object
+  models_restaurant.UpdateRestaurantData:
+    properties:
+      banner_image_url:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      has_delivery:
+        type: boolean
+      has_parking:
+        type: boolean
+      is_active:
+        type: boolean
+      location:
+        $ref: '#/definitions/models_restaurant.Location'
+      logo_image_url:
+        type: string
+      name:
+        type: string
+      number_of_tables:
+        type: integer
+      phone:
+        type: string
+      pure_veg:
+        type: boolean
+    type: object
+  models_subscription.AddSubscriptionData:
+    properties:
+      auto_renewal:
+        description: Whether auto-renewal
+        type: boolean
+    required:
+    - auto_renewal
+    type: object
+  models_user.LoginUserData:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models_user.RegisterUserData:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  models_user.UpdateUserDataByAdmin:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  models_user.UpdateUserDataByUser:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
     type: object
 info:
   contact: {}
@@ -304,7 +350,7 @@ paths:
         name: menu
         required: true
         schema:
-          $ref: '#/definitions/models.AddMenuData'
+          $ref: '#/definitions/models_menu.AddMenuData'
       - description: Restaurant ID
         in: path
         name: restaurant_id
@@ -347,7 +393,7 @@ paths:
         name: category
         required: true
         schema:
-          $ref: '#/definitions/models.AddMenuCategoryData'
+          $ref: '#/definitions/models_menu.AddMenuCategoryData'
       - description: Menu ID
         in: path
         name: menu_id
@@ -382,14 +428,16 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new menu item
+      description: Create multiple menu items
       parameters:
-      - description: Item data
+      - description: Items data
         in: body
-        name: item
+        name: items
         required: true
         schema:
-          $ref: '#/definitions/models.AddMenuItemData'
+          items:
+            $ref: '#/definitions/models_menu.AddMenuItemData'
+          type: array
       - description: Category ID
         in: path
         name: category_id
@@ -408,7 +456,7 @@ paths:
       produces:
       - application/json
       responses: {}
-      summary: Create a new menu item
+      summary: Create multiple menu items
       tags:
       - Menu Category Item
   /api/v1/auth/google:
@@ -455,7 +503,7 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/models.LoginUserData'
+          $ref: '#/definitions/models_user.LoginUserData'
       produces:
       - application/json
       responses: {}
@@ -499,14 +547,78 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.RegisterUserData'
+          $ref: '#/definitions/models_user.RegisterUserData'
       produces:
       - application/json
       responses: {}
       summary: Create a new user
       tags:
       - Auth
-  /api/v1/orders:
+  /api/v1/orders/dine:
+    get:
+      consumes:
+      - application/json
+      description: Get dine orders by restaurant admin
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get dine orders by restaurant admin
+      tags:
+      - Dine Orders
+    post:
+      consumes:
+      - application/json
+      description: Create a new DineOrder
+      parameters:
+      - description: DineOrder data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_order.AddDineOrderData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new DineOrder
+      tags:
+      - Dine Orders
+  /api/v1/orders/dine/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get dine order by ID
+      parameters:
+      - description: Dine Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get dine order by ID
+      tags:
+      - Dine Orders
+  /api/v1/orders/dine/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all dine orders
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all dine orders
+      tags:
+      - Dine Orders
+  /api/v1/orders/restaurant:
     get:
       consumes:
       - application/json
@@ -526,7 +638,7 @@ paths:
       responses: {}
       summary: List restaurant orders
       tags:
-      - Orders
+      - Restaurant Orders
     post:
       consumes:
       - application/json
@@ -537,14 +649,14 @@ paths:
         name: order
         required: true
         schema:
-          $ref: '#/definitions/models_restaurant.CreateOrder'
+          $ref: '#/definitions/models_order.CreateOrder'
       produces:
       - application/json
       responses: {}
       summary: Create a new order
       tags:
-      - Orders
-  /api/v1/orders/{id}:
+      - Restaurant Orders
+  /api/v1/orders/restaurant/{id}:
     get:
       consumes:
       - application/json
@@ -560,8 +672,8 @@ paths:
       responses: {}
       summary: Get order details
       tags:
-      - Orders
-  /api/v1/orders/{id}/cancel:
+      - Restaurant Orders
+  /api/v1/orders/restaurant/{id}/cancel:
     post:
       consumes:
       - application/json
@@ -577,8 +689,8 @@ paths:
       responses: {}
       summary: Cancel order
       tags:
-      - Orders
-  /api/v1/orders/{id}/status:
+      - Restaurant Orders
+  /api/v1/orders/restaurant/{id}/status:
     put:
       consumes:
       - application/json
@@ -600,46 +712,7 @@ paths:
       responses: {}
       summary: Update order status
       tags:
-      - Orders
-  /api/v1/orders/dine:
-    post:
-      consumes:
-      - application/json
-      description: Create a new DineOrder
-      parameters:
-      - description: DineOrder data
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/models_dine.AddDineOrderData'
-      produces:
-      - application/json
-      responses: {}
-      security:
-      - ApiKeyAuth: []
-      summary: Create a new DineOrder
-      tags:
-      - DineOrders
-  /api/v1/payments/dine/{order_id}:
-    post:
-      consumes:
-      - application/json
-      description: Create a new Payment
-      parameters:
-      - description: Order ID
-        in: path
-        name: order_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses: {}
-      security:
-      - ApiKeyAuth: []
-      summary: Create a new Payment
-      tags:
-      - Payments
+      - Restaurant Orders
   /api/v1/payments/dine/callback:
     get:
       consumes:
@@ -672,7 +745,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/models.AddPlanData'
+          $ref: '#/definitions/models_plan.AddPlanData'
       produces:
       - application/json
       responses: {}
@@ -731,7 +804,7 @@ paths:
         name: Plan
         required: true
         schema:
-          $ref: '#/definitions/models.UpdatePlanData'
+          $ref: '#/definitions/models_plan.UpdatePlanData'
       produces:
       - application/json
       responses: {}
@@ -800,7 +873,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/models.AddPlanFeatureData'
+          $ref: '#/definitions/models_plan.AddPlanFeatureData'
       produces:
       - application/json
       responses: {}
@@ -843,7 +916,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/models.UpdatePlanFeatureData'
+          $ref: '#/definitions/models_plan.UpdatePlanFeatureData'
       produces:
       - application/json
       responses: {}
@@ -876,6 +949,26 @@ paths:
       summary: Remove a feature from a Plan
       tags:
       - Plans
+  /api/v1/promo-code/dine:
+    post:
+      consumes:
+      - application/json
+      description: Create a new DinePromoCode
+      parameters:
+      - description: DinePromoCode data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_promoCode.AddDinePromoCode'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new DinePromoCode
+      tags:
+      - Dine Promo Codes
   /api/v1/restaurants:
     get:
       description: Retrieve all restaurants by User
@@ -895,7 +988,7 @@ paths:
         name: restaurant
         required: true
         schema:
-          $ref: '#/definitions/models.AddRestaurantData'
+          $ref: '#/definitions/models_restaurant.AddRestaurantData'
       produces:
       - application/json
       responses: {}
@@ -946,13 +1039,33 @@ paths:
         name: restaurant
         required: true
         schema:
-          $ref: '#/definitions/models.UpdateRestaurantData'
+          $ref: '#/definitions/models_restaurant.UpdateRestaurantData'
       produces:
       - application/json
       responses: {}
       summary: Update a restaurant
       tags:
       - Restaurant
+  /api/v1/restaurants/bank-account:
+    post:
+      consumes:
+      - application/json
+      description: Connect a restaurant's bank account
+      parameters:
+      - description: Bank account data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_restaurant.AddBankAccount'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Connect a restaurant's bank account
+      tags:
+      - Restaurant Bank Account
   /api/v1/restaurants/get-all:
     get:
       description: Retrieve all restaurants
@@ -962,6 +1075,38 @@ paths:
       summary: Retrieve all restaurants
       tags:
       - Restaurant
+  /api/v1/subscriptions:
+    get:
+      consumes:
+      - application/json
+      description: Get all subscriptions
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all subscriptions
+      tags:
+      - Subscriptions
+  /api/v1/subscriptions/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get subscription by ID
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get subscription by ID
+      tags:
+      - Subscriptions
   /api/v1/subscriptions/{payment_id}:
     post:
       consumes:
@@ -978,7 +1123,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/models.AddSubscriptionData'
+          $ref: '#/definitions/models_subscription.AddSubscriptionData'
       produces:
       - application/json
       responses: {}
@@ -1006,7 +1151,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.UpdateUserDataByUser'
+          $ref: '#/definitions/models_user.UpdateUserDataByUser'
       produces:
       - application/json
       responses: {}
@@ -1061,7 +1206,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.UpdateUserDataByAdmin'
+          $ref: '#/definitions/models_user.UpdateUserDataByAdmin'
       produces:
       - application/json
       responses: {}
@@ -1081,4 +1226,37 @@ paths:
       summary: Get all users
       tags:
       - Admin
+  /api/v1/workflow/plan/order-payment:
+    post:
+      consumes:
+      - application/json
+      description: Create a dine order and payment
+      parameters:
+      - description: DineOrder data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_order.AddDineOrderData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a dine order and payment
+      tags:
+      - Workflow
+  /api/v1/workflow/plan/payment-subscription:
+    post:
+      consumes:
+      - application/json
+      description: Verify a payment and create a dine subscription
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Verify a payment and create a dine subscription
+      tags:
+      - Workflow
 swagger: "2.0"

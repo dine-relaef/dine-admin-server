@@ -2,12 +2,13 @@ package services_menu
 
 import (
 	postgres "menu-server/src/config/database"
-	models "menu-server/src/models"
+	models_menu "menu-server/src/models/menu"
 	"net/http"
+
+	utils "menu-server/src/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
-	utils "menu-server/src/utils"
 	// uuid "github.com/jackc/pgx/pgtype/ext/gofrs-uuid"
 )
 
@@ -17,12 +18,12 @@ import (
 // @Tags Menu
 // @Accept json
 // @Produce json
-// @Param menu body models.AddMenuData true "Menu data"
+// @Param menu body models_menu.AddMenuData true "Menu data"
 // @Param restaurant_id path string true "Restaurant ID"
 // @Router /api/v1/{restaurant_id}/menus [post]
 func CreateMenu(c *gin.Context) {
 
-	var menu models.Menu
+	var menu models_menu.Menu
 	if err := c.ShouldBindJSON(&menu); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -39,7 +40,7 @@ func CreateMenu(c *gin.Context) {
 		return
 	}
 
-	var existingMenu models.Menu
+	var existingMenu models_menu.Menu
 	if err := postgres.DB.Where("name = ? AND restaurant_id = ?", menu.Name, restaurantID).First(&existingMenu).Error; err == nil {
 		// If a Menu with the same name and restaurant_id exists
 		c.JSON(http.StatusConflict, gin.H{"error": "This Restaurant has a Menu with the same name"})
@@ -70,7 +71,7 @@ func CreateMenu(c *gin.Context) {
 func GetMenus(c *gin.Context) {
 	restaurant_Id := c.Param("restaurant_id")
 
-	var menus []models.Menu
+	var menus []models_menu.Menu
 	if err := postgres.DB.Where("restaurant_id = ?", restaurant_Id).Find(&menus).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch menus"})
 		return
@@ -92,7 +93,7 @@ func GetMenuByID(c *gin.Context) {
 	restaurantID := c.Param("restaurant_id")
 
 	// Fetch menu with related categories, items, and item options
-	var menu models.Menu
+	var menu models_menu.Menu
 	if err := postgres.DB.
 		Preload("Categories.MenuItems").
 		Preload("Categories.MenuItems.ItemOptions"). // Preload ItemOptions for each MenuItem
@@ -112,8 +113,8 @@ func GetMenuByID(c *gin.Context) {
 // UpdateMenu updates a specific menu by ID
 func UpdateMenu(c *gin.Context) {
 	id := c.Param("menu_id")
-	var menu models.Menu
-	
+	var menu models_menu.Menu
+
 	restaurantID := c.Param("restaurant_id")
 
 	if isAdmin, err := utils.IsAuthorised(c, restaurantID); err != nil {
@@ -157,8 +158,8 @@ func DeleteMenu(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to create menu for this restaurant"})
 		return
 	}
-	
-	if err := postgres.DB.Delete(&models.Menu{}, "id = ?", id).Error; err != nil {
+
+	if err := postgres.DB.Delete(&models_menu.Menu{}, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete menu"})
 		return
 	}

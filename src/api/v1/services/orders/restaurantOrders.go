@@ -2,8 +2,8 @@ package services_orders
 
 import (
 	postgres "menu-server/src/config/database"
-	models "menu-server/src/models"
-	models_restaurant "menu-server/src/models/restaurant"
+	models_menu "menu-server/src/models/menu"
+	models_order "menu-server/src/models/orders"
 
 	"net/http"
 	"time"
@@ -16,13 +16,13 @@ import (
 // CreateOrder handles the creation of a new order
 // @Summary Create a new order
 // @Description Create a new order with items and options
-// @Tags Orders
+// @Tags Restaurant Orders
 // @Accept json
 // @Produce json
-// @Param order body models_restaurant.CreateOrder true "Order data"
-// @Router /api/v1/orders [post]
+// @Param order body models_order.CreateOrder true "Order data"
+// @Router /api/v1/orders/restaurant [post]
 func CreateOrder(c *gin.Context) {
-	var input models_restaurant.CreateOrder
+	var input models_order.CreateOrder
 
 	// Bind the JSON input to the DTO
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -33,19 +33,19 @@ func CreateOrder(c *gin.Context) {
 	// Calculate totals
 	var subtotal, tax, serviceFee, total float64
 	for _, item := range input.Items {
-		var menuItem models.MenuItem
+		var menuItem models_menu.MenuItem
 		if err := postgres.DB.First(&menuItem, "id = ?", item.MenuItemID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Menu item not found"})
 			return
 		}
 
-		var menuItemOptions []models.MenuItemOption
+		var menuItemOptions []models_menu.MenuItemOption
 		if err := postgres.DB.Where("menu_item_id = ?", item.MenuItemID).Find(&menuItemOptions).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Menu item options not found"})
 			return
 		}
 
-		var itemOption models.MenuItemOption
+		var itemOption models_menu.MenuItemOption
 		for _, option := range menuItemOptions {
 			itemOptionUUID := *item.ItemOptionID
 
@@ -64,15 +64,15 @@ func CreateOrder(c *gin.Context) {
 	total = subtotal + tax + serviceFee
 
 	// Create the Order
-	order := models_restaurant.Order{
+	order := models_order.Order{
 		ID:            uuid.Must(uuid.NewV4()),
 		RestaurantID:  input.RestaurantID,
 		CustomerEmail: input.CustomerEmail,
 		CustomerName:  input.CustomerName,
 		CustomerPhone: input.CustomerPhone,
 		PaymentType:   input.PaymentType,
-		Status:        models_restaurant.OrderStatusPending,
-		OrderType:     models_restaurant.OrderType(input.OrderType),
+		Status:        models_order.OrderStatusPending,
+		OrderType:     models_order.OrderType(input.OrderType),
 		SubTotal:      subtotal,
 		Tax:           tax,
 		ServiceFee:    serviceFee,
@@ -90,14 +90,14 @@ func CreateOrder(c *gin.Context) {
 	// Create OrderItems
 	for _, item := range input.Items {
 
-		var itemOption models.MenuItemOption
+		var itemOption models_menu.MenuItemOption
 
 		if err := postgres.DB.First(&itemOption, "id = ?", item.ItemOptionID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Menu item option not found"})
 			return
 		}
 
-		orderItem := models_restaurant.OrderItem{
+		orderItem := models_order.OrderItem{
 			ID:             uuid.Must(uuid.NewV4()),
 			OrderID:        order.ID,
 			MenuItemID:     item.MenuItemID,
@@ -123,11 +123,11 @@ func CreateOrder(c *gin.Context) {
 // GetOrder retrieves an order by ID
 // @Summary Get order details
 // @Description Get detailed information about a specific order
-// @Tags Orders
+// @Tags Restaurant Orders
 // @Accept json
 // @Produce json
 // @Param id path string true "Order ID"
-// @Router /api/v1/orders/{id} [get]
+// @Router /api/v1/orders/restaurant/{id} [get]
 func GetOrder(c *gin.Context) {
 	orderID, err := uuid.FromString(c.Param("id"))
 	if err != nil {
@@ -135,7 +135,7 @@ func GetOrder(c *gin.Context) {
 		return
 	}
 
-	var order models_restaurant.Order
+	var order models_order.Order
 	if err := postgres.DB.Preload("OrderItems.MenuItem").
 		Preload("OrderItems.SelectedOptions").
 		First(&order, "id = ?", orderID).Error; err != nil {
@@ -149,12 +149,12 @@ func GetOrder(c *gin.Context) {
 // UpdateOrderStatus updates the status of an order
 // @Summary Update order status
 // @Description Update the status of a specific order
-// @Tags Orders
+// @Tags Restaurant Orders
 // @Accept json
 // @Produce json
 // @Param id path string true "Order ID"
-// @Param status body models_restaurant.OrderStatus true "New Status"
-// @Router /api/v1/orders/{id}/status [put]
+// @Param status body models_order.OrderStatus true "New Status"
+// @Router /api/v1/orders/restaurant/{id}/status [put]
 func UpdateOrderStatus(c *gin.Context) {
 	orderID, err := uuid.FromString(c.Param("id"))
 	if err != nil {
@@ -163,7 +163,7 @@ func UpdateOrderStatus(c *gin.Context) {
 	}
 
 	var statusUpdate struct {
-		Status models_restaurant.OrderStatus `json:"status" binding:"required"`
+		Status models_order.OrderStatus `json:"status" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&statusUpdate); err != nil {
@@ -171,7 +171,7 @@ func UpdateOrderStatus(c *gin.Context) {
 		return
 	}
 
-	var order models_restaurant.Order
+	var order models_order.Order
 	if err := postgres.DB.First(&order, "id = ?", orderID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
 		return
@@ -194,12 +194,12 @@ func UpdateOrderStatus(c *gin.Context) {
 // ListOrders retrieves orders for a restaurant
 // @Summary List restaurant orders
 // @Description Get list of orders for a specific restaurant
-// @Tags Orders
+// @Tags Restaurant Orders
 // @Accept json
 // @Produce json
 // @Param restaurant_id query string true "Restaurant ID"
 // @Param status query string false "Order Status Filter"
-// @Router /api/v1/orders [get]
+// @Router /api/v1/orders/restaurant [get]
 func ListOrders(c *gin.Context) {
 	restaurantID, err := uuid.FromString(c.Query("restaurant_id"))
 	if err != nil {
@@ -214,7 +214,7 @@ func ListOrders(c *gin.Context) {
 		query = query.Where("status = ?", status)
 	}
 
-	var orders []models_restaurant.Order
+	var orders []models_order.Order
 	if err := query.Preload("OrderItems.MenuItem").Find(&orders).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch orders"})
 		return
@@ -226,11 +226,11 @@ func ListOrders(c *gin.Context) {
 // CancelOrder cancels an existing order
 // @Summary Cancel order
 // @Description Cancel an existing order
-// @Tags Orders
+// @Tags Restaurant Orders
 // @Accept json
 // @Produce json
 // @Param id path string true "Order ID"
-// @Router /api/v1/orders/{id}/cancel [post]
+// @Router /api/v1/orders/restaurant/{id}/cancel [post]
 func CancelOrder(c *gin.Context) {
 	orderID, err := uuid.FromString(c.Param("id"))
 	if err != nil {
@@ -238,18 +238,18 @@ func CancelOrder(c *gin.Context) {
 		return
 	}
 
-	var order models_restaurant.Order
+	var order models_order.Order
 	if err := postgres.DB.First(&order, "id = ?", orderID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
 		return
 	}
 
-	if order.Status == models_restaurant.OrderStatusCompleted {
+	if order.Status == models_order.OrderStatusCompleted {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot cancel completed order"})
 		return
 	}
 
-	if err := postgres.DB.Model(&order).Update("status", models_restaurant.OrderStatusCancelled).Error; err != nil {
+	if err := postgres.DB.Model(&order).Update("status", models_order.OrderStatusCancelled).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to cancel order"})
 		return
 	}
