@@ -2,40 +2,28 @@ package middleware
 
 import (
 	"net/http"
-	models "menu-server/src/models"
-	postgres "menu-server/src/config/database"
+
 	"github.com/gin-gonic/gin"
 )
 
-func RoleMiddleware(requiredRole string) gin.HandlerFunc {
+func contains(slice []string, item interface{}) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
+}
+
+func RoleMiddleware(requiredRoles []string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Extract user_id from query parameters
-		userID := c.Query("user_id")
-		if userID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "user_id query parameter is required"})
+		role, _ := c.Get("role")
+		if !contains(requiredRoles, role) {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			c.Abort()
 			return
 		}
-
-		var user models.User
-		if err := postgres.DB.First(&user, "id = ?", userID).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-			c.Abort()
-			return
-		}
-
-		// Check if the user's role matches the required role
-		if user.Role != requiredRole {
-			c.JSON(http.StatusForbidden, gin.H{"error": "Permission denied, insufficient role"})
-			c.Abort()
-			return
-		}
-
-		c.Set("user_id", userID)
-		c.Set("role", user.Role)
 		c.Next()
-
-		// Add user_id and role to context for further use
-		
 	}
 }

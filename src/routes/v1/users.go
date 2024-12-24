@@ -1,8 +1,8 @@
-package routes
+package routes_v1
 
 import (
 	"menu-server/src/api/v1/middleware"
-	services "menu-server/src/api/v1/services"
+	services "menu-server/src/api/v1/services/users"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,10 +11,12 @@ import (
 // @Summary Set up user routes
 func SetupUserRoutes(userGroup *gin.RouterGroup) {
 
-	
-	userGroup.GET("/", middleware.RoleMiddleware("admin"), services.GetUsers)
-	userGroup.GET("/:id", services.GetUserByID)
-	userGroup.PUT("/:id", services.UpdateUser)
-	userGroup.DELETE("/:id", services.DeleteUser)
+	userGroup.GET("/get-all", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin"}), services.GetAllUsers)
+	userGroup.GET("/:id", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin"}), services.GetUserByID)
+	userGroup.PUT("/:id", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin"}), services.UpdateUser)
+	userGroup.DELETE("/:id", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin"}), services.DeleteUser)
+
+	userGroup.GET("/", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin", "restaurant_admin"}), services.GetUser)
+	userGroup.PUT("/", middleware.Authenticate, middleware.RoleMiddleware([]string{"admin", "restaurant_admin"}), services.UpdateUserByUser)
 
 }

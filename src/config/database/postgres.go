@@ -2,60 +2,110 @@ package postgres
 
 import (
 	"log"
-	"menu-server/src/config/env"
-	models "menu-server/src/models" // replace with the actual path to your users package
+	"menu-server/src/config/env" // Adjust to the actual path
+	models_common "menu-server/src/models/Common"
+	models_menu "menu-server/src/models/menu"
+	models_order "menu-server/src/models/orders"
+	models_payment "menu-server/src/models/payments"
+	models_plan "menu-server/src/models/plans"
+	models_promoCode "menu-server/src/models/promoCode"
+	models_restaurant "menu-server/src/models/restaurants"
+	models_subscription "menu-server/src/models/subscriptions"
+	models_user "menu-server/src/models/users"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
+// DB is the global database instance
 var DB *gorm.DB
 
-type Plan models.Plan
-type User models.User
-type Restaurant models.Restaurant
-type Menu models.Menu
-type MenuItem models.MenuItem
-type MenuCategory models.MenuCategory
-type Order models.Order
-type Payment models.Payment
-type Subscription models.Subscription
+// Aliased models for brevity
+type (
+	Plan                  = models_plan.Plan
+	User                  = models_user.User
+	Restaurant            = models_restaurant.Restaurant
+	RestaurantBankAccount = models_restaurant.RestaurantBankAccount
+	Menu                  = models_menu.Menu
+	MenuItem              = models_menu.MenuItem
+	MenuCategory          = models_menu.MenuCategory
 
+	MenuItemOption  = models_menu.MenuItemOption
+	RestaurantOrder = models_order.Order
+	DinePayment     = models_payment.DinePayment
+
+	DineOrder           = models_order.DineOrder
+	Subscription        = models_subscription.Subscription
+	RestaurantOrderItem = models_order.OrderItem
+
+	PlanFeature            = models_plan.PlanFeature
+	PlanFeatureAssociation = models_plan.PlanFeatureAssociation
+
+	RestaurantsCount = models_common.RestaurantsCount
+
+	DinePromoCode = models_promoCode.DinePromoCode
+)
+
+// InitDB initializes the PostgreSQL database connection and runs migrations.
 func InitDB() {
-	var err error
-
-	// Read the DATABASE_URL environment variable
+	// Load the DATABASE_URL from environment variables
 	dsn := env.PostgresDatabaseVar["DATABASE_URL"]
 	if dsn == "" {
 		log.Fatal("DATABASE_URL environment variable is not set")
 	}
 
-	// Connect to the database
+	// Open the database connection
+	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 
-	// Create UUID extension
-	err = DB.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"").Error
-	if err != nil {
-		log.Printf("Error creating uuid-ossp extension: %v", err)
-		// Note: You might want to handle this error more robustly
+	// Ensure the UUID extension is available
+	if err := ensureUUIDExtension(); err != nil {
+		log.Fatalf("Failed to ensure UUID extension: %v", err)
+	}
+	// Drop table
+	// DB.Migrator().DropTable( &DinePromoCode{})
+	// DB.Migrator().DropColumn(&models.DinePromoCode{}, "duration")
+	// Run migrations for all models
+	if err := migrateModels(); err != nil {
+		log.Fatalf("Failed to migrate database schema: %v", err)
 	}
 
-	// Auto-migrate models
-	err = DB.AutoMigrate(
+	// Generate common tables
+
+	log.Println("Database initialized successfully")
+}
+
+func GenrateCommonTable(table interface{}) {
+	DB.Create(&table)
+}
+
+// ensureUUIDExtension ensures the "uuid-ossp" PostgreSQL extension exists.
+func ensureUUIDExtension() error {
+	return DB.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"").Error
+}
+
+// migrateModels runs the database schema migrations.
+func migrateModels() error {
+	return DB.AutoMigrate(
 		&User{},
 		&Plan{},
+		&PlanFeature{},
+		&PlanFeatureAssociation{},
 		&Restaurant{},
 		&Menu{},
 		&MenuCategory{},
 		&MenuItem{},
-		&Order{},
-		&Payment{},
+		&DineOrder{},
+		&MenuItemOption{},
+		&RestaurantOrder{},
+		&RestaurantOrderItem{},
+		&DinePayment{},
 		&Subscription{},
+		&RestaurantsCount{},
+		&RestaurantBankAccount{},
+		&DinePromoCode{},
 	)
-	if err != nil {
-		log.Fatalf("Failed to migrate database schema: %v", err)
-	}
 }

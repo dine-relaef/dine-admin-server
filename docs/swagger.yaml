@@ -1,12 +1,306 @@
 definitions:
-  main.Response:
+  models_menu.AddMenuCategoryData:
     properties:
-      message:
+      description:
         type: string
-      status:
+      image_url:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  models_menu.AddMenuData:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  models_menu.AddMenuItemData:
+    properties:
+      description:
+        type: string
+      image_url:
+        type: string
+      is_available:
+        type: boolean
+      is_vegetarian:
+        type: boolean
+      name:
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/models_menu.AddMenuItemOptionData'
+        type: array
+    required:
+    - name
+    type: object
+  models_menu.AddMenuItemOptionData:
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+    required:
+    - name
+    - price
+    type: object
+  models_order.AddDineOrderData:
+    properties:
+      duration:
+        type: string
+      plan_id:
+        type: string
+      promo_code:
+        type: string
+      restaurant_id:
+        type: string
+    required:
+    - duration
+    - plan_id
+    - restaurant_id
+    type: object
+  models_order.CreateOrder:
+    properties:
+      customer_email:
+        type: string
+      customer_name:
+        type: string
+      customer_phone:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/models_order.CreateOrderItem'
+        type: array
+      notes:
+        type: string
+      order_type:
+        enum:
+        - DINEIN
+        - PICKUP
+        - DELIVERY
+        type: string
+      payment_type:
+        enum:
+        - online
+        - onsite
+        type: string
+      restaurant_id:
+        type: string
+    required:
+    - customer_name
+    - customer_phone
+    - items
+    - order_type
+    - payment_type
+    - restaurant_id
+    type: object
+  models_order.CreateOrderItem:
+    properties:
+      item_option_id:
+        type: string
+      item_option_name:
+        type: string
+      menu_item_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - menu_item_id
+    - quantity
+    type: object
+  models_plan.AddPlanData:
+    properties:
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      trial_period:
+        type: boolean
+    required:
+    - description
+    - name
+    - price
+    - trial_period
+    type: object
+  models_plan.AddPlanFeatureData:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  models_plan.UpdatePlanData:
+    properties:
+      description:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      trial_period:
+        type: boolean
+    type: object
+  models_plan.UpdatePlanFeatureData:
+    properties:
+      description:
+        type: string
+      name:
         type: string
     type: object
-  models.CreateUserData:
+  models_promoCode.AddDinePromoCode:
+    properties:
+      code:
+        type: string
+      days:
+        type: integer
+      discount:
+        type: number
+      discount_type:
+        type: string
+      is_active:
+        type: boolean
+      max_uses:
+        type: integer
+      plan_ids:
+        items:
+          type: string
+        type: array
+    type: object
+  models_restaurant.AddBankAccount:
+    properties:
+      account_holder:
+        type: string
+      account_number:
+        type: string
+      bank_name:
+        type: string
+      branch:
+        type: string
+      email:
+        type: string
+      ifsc_code:
+        type: string
+      phone:
+        type: string
+      restaurant_id:
+        type: string
+    type: object
+  models_restaurant.AddRestaurantData:
+    properties:
+      banner_image_url:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      has_delivery:
+        type: boolean
+      has_parking:
+        type: boolean
+      is_active:
+        type: boolean
+      location:
+        $ref: '#/definitions/models_restaurant.Location'
+      logo_image_url:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      pure_veg:
+        type: boolean
+    type: object
+  models_restaurant.Location:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      post_code:
+        type: string
+      state:
+        type: string
+      state_code:
+        type: string
+    type: object
+  models_restaurant.UpdateRestaurantData:
+    properties:
+      banner_image_url:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      has_delivery:
+        type: boolean
+      has_parking:
+        type: boolean
+      is_active:
+        type: boolean
+      location:
+        $ref: '#/definitions/models_restaurant.Location'
+      logo_image_url:
+        type: string
+      name:
+        type: string
+      number_of_tables:
+        type: integer
+      phone:
+        type: string
+      pure_veg:
+        type: boolean
+    type: object
+  models_subscription.AddSubscriptionData:
+    properties:
+      auto_renewal:
+        description: Whether auto-renewal
+        type: boolean
+    required:
+    - auto_renewal
+    type: object
+  models_user.LoginUserData:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models_user.RegisterUserData:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  models_user.UpdateUserDataByAdmin:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  models_user.UpdateUserDataByUser:
     properties:
       email:
         type: string
@@ -27,14 +321,221 @@ paths:
       description: Health check endpoint
       produces:
       - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/main.Response'
+      responses: {}
       summary: Health check endpoint
       tags:
       - Health
+  /api/v1/{restaurant_id}/menus:
+    get:
+      description: Retrieve all menus
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve all menus
+      tags:
+      - Menu
+    post:
+      consumes:
+      - application/json
+      description: Create a new menu
+      parameters:
+      - description: Menu data
+        in: body
+        name: menu
+        required: true
+        schema:
+          $ref: '#/definitions/models_menu.AddMenuData'
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new menu
+      tags:
+      - Menu
+  /api/v1/{restaurant_id}/menus/{menu_id}:
+    get:
+      description: Retrieve a specific menu by ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      - description: Menu ID
+        in: path
+        name: menu_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve a specific menu by ID
+      tags:
+      - Menu
+  /api/v1/{restaurant_id}/menus/{menu_id}/categories:
+    post:
+      consumes:
+      - application/json
+      description: Create a new category for a specific menu
+      parameters:
+      - description: Category data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/models_menu.AddMenuCategoryData'
+      - description: Menu ID
+        in: path
+        name: menu_id
+        required: true
+        type: string
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new category for a specific menu
+      tags:
+      - Menu Category
+  /api/v1/{restaurant_id}/menus/{menu_id}/categories/{category_id}/items:
+    get:
+      description: Retrieve all items for a specific category
+      parameters:
+      - description: Category ID
+        in: path
+        name: category_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve all items for a specific category
+      tags:
+      - Menu
+    post:
+      consumes:
+      - application/json
+      description: Create multiple menu items
+      parameters:
+      - description: Items data
+        in: body
+        name: items
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models_menu.AddMenuItemData'
+          type: array
+      - description: Category ID
+        in: path
+        name: category_id
+        required: true
+        type: string
+      - description: Menu ID
+        in: path
+        name: menu_id
+        required: true
+        type: string
+      - description: Restaurant ID
+        in: path
+        name: restaurant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Create multiple menu items
+      tags:
+      - Menu Category Item
+  /api/v1/auth/google:
+    get:
+      consumes:
+      - application/json
+      description: Get Google OAuth2 URL with state parameter
+      produces:
+      - application/json
+      responses: {}
+      summary: Initiate Google OAuth2 login
+      tags:
+      - Auth
+  /api/v1/auth/google/callback:
+    post:
+      consumes:
+      - application/json
+      description: Handle Google OAuth2 callback
+      parameters:
+      - description: OAuth2 authorization code
+        in: query
+        name: code
+        required: true
+        type: string
+      - description: OAuth2 state parameter
+        in: query
+        name: state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Google OAuth2 Callback
+      tags:
+      - Auth
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login a user in the system
+      parameters:
+      - description: User credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models_user.LoginUserData'
+      produces:
+      - application/json
+      responses: {}
+      summary: Login a user
+      tags:
+      - Auth
+  /api/v1/auth/logout:
+    post:
+      description: Clear user authentication cookies
+      produces:
+      - application/json
+      responses: {}
+      summary: Logout a user
+      tags:
+      - Auth
+  /api/v1/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Generate a new access token using a refresh token
+      parameters:
+      - description: Refresh Token
+        in: header
+        name: refresh_token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Refresh Access Token
+      tags:
+      - Auth
   /api/v1/auth/register:
     post:
       consumes:
@@ -46,28 +547,716 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.CreateUserData'
+          $ref: '#/definitions/models_user.RegisterUserData'
       produces:
       - application/json
       responses: {}
       summary: Create a new user
       tags:
       - Auth
-  /api/v1/users:
+  /api/v1/orders/dine:
     get:
-      description: Get all users in the system, or a specific user if the user_id
-        query parameter is provided
+      consumes:
+      - application/json
+      description: Get dine orders by restaurant admin
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get dine orders by restaurant admin
+      tags:
+      - Dine Orders
+    post:
+      consumes:
+      - application/json
+      description: Create a new DineOrder
       parameters:
-      - description: User ID to filter by
-        in: query
-        name: user_id
+      - description: DineOrder data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_order.AddDineOrderData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new DineOrder
+      tags:
+      - Dine Orders
+  /api/v1/orders/dine/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get dine order by ID
+      parameters:
+      - description: Dine Order ID
+        in: path
+        name: id
+        required: true
         type: string
       produces:
       - application/json
       responses: {}
       security:
       - ApiKeyAuth: []
-      summary: Get all users or a specific user by ID
+      summary: Get dine order by ID
       tags:
-      - Users
+      - Dine Orders
+  /api/v1/orders/dine/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all dine orders
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all dine orders
+      tags:
+      - Dine Orders
+  /api/v1/orders/restaurant:
+    get:
+      consumes:
+      - application/json
+      description: Get list of orders for a specific restaurant
+      parameters:
+      - description: Restaurant ID
+        in: query
+        name: restaurant_id
+        required: true
+        type: string
+      - description: Order Status Filter
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: List restaurant orders
+      tags:
+      - Restaurant Orders
+    post:
+      consumes:
+      - application/json
+      description: Create a new order with items and options
+      parameters:
+      - description: Order data
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models_order.CreateOrder'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new order
+      tags:
+      - Restaurant Orders
+  /api/v1/orders/restaurant/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get order details
+      tags:
+      - Restaurant Orders
+  /api/v1/orders/restaurant/{id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Cancel an existing order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Cancel order
+      tags:
+      - Restaurant Orders
+  /api/v1/orders/restaurant/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: Update the status of a specific order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New Status
+        in: body
+        name: status
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Update order status
+      tags:
+      - Restaurant Orders
+  /api/v1/payments/dine/callback:
+    get:
+      consumes:
+      - application/json
+      description: Handle Razorpay payment callback
+      produces:
+      - application/json
+      responses: {}
+      summary: Razorpay payment callback
+      tags:
+      - Payments
+  /api/v1/plans:
+    get:
+      consumes:
+      - application/json
+      description: Get Plans
+      produces:
+      - application/json
+      responses: {}
+      summary: Get Plans
+      tags:
+      - Plans
+    post:
+      consumes:
+      - application/json
+      description: Create a new Plan
+      parameters:
+      - description: Plan data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_plan.AddPlanData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new Plan
+      tags:
+      - Plans
+  /api/v1/plans/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a Plan by ID
+      parameters:
+      - description: Plan ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a Plan
+      tags:
+      - Plans
+    get:
+      consumes:
+      - application/json
+      description: Get a Plan by ID
+      parameters:
+      - description: Plan ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get a Plan by ID
+      tags:
+      - Plans
+    put:
+      consumes:
+      - application/json
+      description: Update a Plan by ID
+      parameters:
+      - description: Plan ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Plan data
+        in: body
+        name: Plan
+        required: true
+        schema:
+          $ref: '#/definitions/models_plan.UpdatePlanData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update a Plan
+      tags:
+      - Plans
+  /api/v1/plans/add-feature:
+    put:
+      consumes:
+      - application/json
+      description: Add a feature to a Plan
+      parameters:
+      - description: Plan ID
+        in: query
+        name: plan_id
+        required: true
+        type: string
+      - description: Feature ID
+        in: query
+        name: feature_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Add a feature to a Plan
+      tags:
+      - Plans
+  /api/v1/plans/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all Plans
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all Plans
+      tags:
+      - Plans
+  /api/v1/plans/feature:
+    get:
+      consumes:
+      - application/json
+      description: Get all PlanFeatures
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all PlanFeatures
+      tags:
+      - PlanFeatures
+    post:
+      consumes:
+      - application/json
+      description: Create a new PlanFeatures
+      parameters:
+      - description: PlanFeatures data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_plan.AddPlanFeatureData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new PlanFeatures
+      tags:
+      - PlanFeatures
+  /api/v1/plans/feature/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a PlanFeatures by ID
+      parameters:
+      - description: PlanFeatures ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a PlanFeatures
+      tags:
+      - PlanFeatures
+    put:
+      consumes:
+      - application/json
+      description: Update a PlanFeatures
+      parameters:
+      - description: PlanFeatures ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: PlanFeatures data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_plan.UpdatePlanFeatureData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update a PlanFeatures
+      tags:
+      - PlanFeatures
+  /api/v1/plans/remove-feature:
+    put:
+      consumes:
+      - application/json
+      description: Remove a feature from a Plan
+      parameters:
+      - description: Plan ID
+        in: query
+        name: plan_id
+        required: true
+        type: string
+      - description: Feature ID
+        in: query
+        name: feature_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Remove a feature from a Plan
+      tags:
+      - Plans
+  /api/v1/promo-code/dine:
+    post:
+      consumes:
+      - application/json
+      description: Create a new DinePromoCode
+      parameters:
+      - description: DinePromoCode data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_promoCode.AddDinePromoCode'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new DinePromoCode
+      tags:
+      - Dine Promo Codes
+  /api/v1/restaurants:
+    get:
+      description: Retrieve all restaurants by User
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve all restaurants by User
+      tags:
+      - Restaurant
+    post:
+      consumes:
+      - application/json
+      description: Create a new restaurant
+      parameters:
+      - description: Restaurant data
+        in: body
+        name: restaurant
+        required: true
+        schema:
+          $ref: '#/definitions/models_restaurant.AddRestaurantData'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new restaurant
+      tags:
+      - Restaurant
+  /api/v1/restaurants/{id}:
+    delete:
+      description: Delete a restaurant by ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Delete a restaurant
+      tags:
+      - Restaurant
+    get:
+      description: Retrieve a restaurant by ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve a restaurant by ID
+      tags:
+      - Restaurant
+    put:
+      consumes:
+      - application/json
+      description: Update a restaurant by ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Restaurant data
+        in: body
+        name: restaurant
+        required: true
+        schema:
+          $ref: '#/definitions/models_restaurant.UpdateRestaurantData'
+      produces:
+      - application/json
+      responses: {}
+      summary: Update a restaurant
+      tags:
+      - Restaurant
+  /api/v1/restaurants/bank-account:
+    post:
+      consumes:
+      - application/json
+      description: Connect a restaurant's bank account
+      parameters:
+      - description: Bank account data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_restaurant.AddBankAccount'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Connect a restaurant's bank account
+      tags:
+      - Restaurant Bank Account
+  /api/v1/restaurants/get-all:
+    get:
+      description: Retrieve all restaurants
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieve all restaurants
+      tags:
+      - Restaurant
+  /api/v1/subscriptions:
+    get:
+      consumes:
+      - application/json
+      description: Get all subscriptions
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all subscriptions
+      tags:
+      - Subscriptions
+  /api/v1/subscriptions/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get subscription by ID
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get subscription by ID
+      tags:
+      - Subscriptions
+  /api/v1/subscriptions/{payment_id}:
+    post:
+      consumes:
+      - application/json
+      description: Create a new subscription
+      parameters:
+      - description: Payment ID
+        in: path
+        name: payment_id
+        required: true
+        type: string
+      - description: Subscription data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_subscription.AddSubscriptionData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new subscription
+      tags:
+      - Subscriptions
+  /api/v1/users:
+    get:
+      description: Get the user information
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get user information
+      tags:
+      - User
+    put:
+      description: Update the user information
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models_user.UpdateUserDataByUser'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update user information
+      tags:
+      - User
+  /api/v1/users/{id}:
+    delete:
+      description: Delete a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a user by ID
+      tags:
+      - Admin
+    get:
+      description: Get a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get a user by ID
+      tags:
+      - Admin
+    put:
+      description: Update a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models_user.UpdateUserDataByAdmin'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update a user by ID
+      tags:
+      - Admin
+  /api/v1/users/get-all:
+    get:
+      description: Get all users in the system
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get all users
+      tags:
+      - Admin
+  /api/v1/workflow/plan/order-payment:
+    post:
+      consumes:
+      - application/json
+      description: Create a dine order and payment
+      parameters:
+      - description: DineOrder data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models_order.AddDineOrderData'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a dine order and payment
+      tags:
+      - Workflow
+  /api/v1/workflow/plan/payment-subscription:
+    post:
+      consumes:
+      - application/json
+      description: Verify a payment and create a dine subscription
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Verify a payment and create a dine subscription
+      tags:
+      - Workflow
 swagger: "2.0"
