@@ -41,5 +41,5 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} "
           cd ~/app &&
           chmod +x run.sh && 
-          ./run.sh test
+          sudo ./run.sh test
           "

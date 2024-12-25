@@ -15,6 +15,7 @@ elif [ "$1" == "prod" ]; then
     docker-compose -f docker-compose.prod.yml up -d --build
 elif [ "$1" == "test" ]; then
     echo "Starting in test mode..."
+    docker-compose down
     docker-compose up -d --build
 else
     echo "Invalid argument. Please pass 'dev', 'test', or 'prod' as an argument."
