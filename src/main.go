@@ -21,8 +21,8 @@ func main() {
 	log.Println("Environment: ", env.AppVar["ENVIRONMENT"])
 	log.Println("App Name: ", env.PostgresDatabaseVar["DATABASE_URL"])
 	if env.AppVar["ENVIRONMENT"] != "production" {
-		docs.SwaggerInfo.Title = "Menu Server"
-		docs.SwaggerInfo.Description = "Menu Server API documentation"
+		docs.SwaggerInfo.Title = "Dine Server"
+		docs.SwaggerInfo.Description = "Dine Server API documentation"
 		docs.SwaggerInfo.Version = "1.0"
 		docs.SwaggerInfo.Host = env.AppVar["SERVER_HOST"]
 		docs.SwaggerInfo.Schemes = []string{"http"}
