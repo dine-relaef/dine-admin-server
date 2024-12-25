@@ -23,6 +23,10 @@ jobs:
         run: |
           ssh-keyscan -H ${{ secrets.DEPLOY_SERVER }} >> ~/.ssh/known_hosts
 
+      - name: Create app directory on server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} "mkdir -p ~/app"
+
       - name: Copy .env to server
         run: |
           echo "${{ secrets.ENV_FILE_TEST }}" > .env
