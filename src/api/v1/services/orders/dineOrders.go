@@ -1,12 +1,12 @@
 package services_orders
 
 import (
+	postgres "dine-server/src/config/database"
+	models_order "dine-server/src/models/orders"
+	models_plan "dine-server/src/models/plans"
+	models_promoCode "dine-server/src/models/promoCode"
+	models_restaurant "dine-server/src/models/restaurants"
 	"fmt"
-	postgres "menu-server/src/config/database"
-	models_order "menu-server/src/models/orders"
-	models_plan "menu-server/src/models/plans"
-	models_promoCode "menu-server/src/models/promoCode"
-	models_restaurant "menu-server/src/models/restaurants"
 	"net/http"
 	"time"
 

@@ -1,19 +1,17 @@
 package env
 
 import (
-	"os"
-
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
 
 var AuthVar = map[string]string{
-	"ACCESS_TOKEN_SECRET":  os.Getenv("ACCESS_TOKEN_SECRET"),
-	"ACCESS_TOKEN_AGE":     os.Getenv("ACCESS_TOKEN_AGE"),
-	"REFRESH_TOKEN_SECRET": os.Getenv("REFRESH_TOKEN_SECRET"),
-	"REFRESH_TOKEN_AGE":    os.Getenv("REFRESH_TOKEN_AGE"),
-	"GOOGLE_CLIENT_ID":     os.Getenv("GOOGLE_CLIENT_ID"),
-	"GOOGLE_CLIENT_SECRET": os.Getenv("GOOGLE_CLIENT_SECRET"),
+	"ACCESS_TOKEN_SECRET":  GetEnv("ACCESS_TOKEN_SECRET"),
+	"ACCESS_TOKEN_AGE":     GetEnv("ACCESS_TOKEN_AGE"),
+	"REFRESH_TOKEN_SECRET": GetEnv("REFRESH_TOKEN_SECRET"),
+	"REFRESH_TOKEN_AGE":    GetEnv("REFRESH_TOKEN_AGE"),
+	"GOOGLE_CLIENT_ID":     GetEnv("GOOGLE_CLIENT_ID"),
+	"GOOGLE_CLIENT_SECRET": GetEnv("GOOGLE_CLIENT_SECRET"),
 }
 
 var (

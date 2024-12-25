@@ -1,14 +1,14 @@
 package services_subscription
 
 import (
+	postgres "dine-server/src/config/database"
+	models_order "dine-server/src/models/orders"
+	models_payment "dine-server/src/models/payments"
+	models_plan "dine-server/src/models/plans"
+	models_restaurant "dine-server/src/models/restaurants"
+	models_subscription "dine-server/src/models/subscriptions"
 	"fmt"
 	"log"
-	postgres "menu-server/src/config/database"
-	models_order "menu-server/src/models/orders"
-	models_payment "menu-server/src/models/payments"
-	models_plan "menu-server/src/models/plans"
-	models_restaurant "menu-server/src/models/restaurants"
-	models_subscription "menu-server/src/models/subscriptions"
 	"net/http"
 	"time"
 
@@ -63,8 +63,6 @@ func CreateSubscription(c *gin.Context) (gin.H, error) {
 
 		return nil, fmt.Errorf("unauthorized access")
 	}
-
-
 
 	// Check if subscription already exists for the order
 	if err := postgres.DB.Where("order_id = ?", order.ID).First(&models_subscription.Subscription{}).Error; err == nil {

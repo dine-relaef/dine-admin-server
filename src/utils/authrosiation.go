@@ -1,9 +1,9 @@
 package utils
 
 import (
+	postgres "dine-server/src/config/database"
+	models_restaurant "dine-server/src/models/restaurants"
 	"fmt"
-	postgres "menu-server/src/config/database"
-	models_restaurant "menu-server/src/models/restaurants"
 
 	"github.com/gin-gonic/gin"
 )

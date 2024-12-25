@@ -1,7 +1,7 @@
 package utils
 
 import (
-	models_restaurant "menu-server/src/models/restaurants"
+	models_restaurant "dine-server/src/models/restaurants"
 )
 
 func RestaurantResponse(restaurant []models_restaurant.Restaurant) []models_restaurant.ResponseRestaurantData {

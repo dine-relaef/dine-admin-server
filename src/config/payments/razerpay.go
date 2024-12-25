@@ -1,7 +1,7 @@
 package payments
 
 import (
-	"menu-server/src/config/env"
+	"dine-server/src/config/env"
 
 	"github.com/razorpay/razorpay-go"
 )

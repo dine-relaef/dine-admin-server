@@ -3,14 +3,14 @@ package services_payments
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	postgres "dine-server/src/config/database"
+	"dine-server/src/config/env"
+	"dine-server/src/config/payments"
+	models_order "dine-server/src/models/orders"
+	models_payment "dine-server/src/models/payments"
 	"encoding/hex"
 	"fmt"
 	"math"
-	postgres "menu-server/src/config/database"
-	"menu-server/src/config/env"
-	"menu-server/src/config/payments"
-	models_order "menu-server/src/models/orders"
-	models_payment "menu-server/src/models/payments"
 
 	"github.com/gin-gonic/gin"
 )

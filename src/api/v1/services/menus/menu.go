@@ -1,11 +1,11 @@
 package services_menu
 
 import (
-	postgres "menu-server/src/config/database"
-	models_menu "menu-server/src/models/menu"
+	postgres "dine-server/src/config/database"
+	models_menu "dine-server/src/models/menu"
 	"net/http"
 
-	utils "menu-server/src/utils"
+	utils "dine-server/src/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"

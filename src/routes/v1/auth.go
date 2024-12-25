@@ -1,7 +1,7 @@
 package routes_v1
 
 import (
-	services "menu-server/src/api/v1/services/users"
+	services "dine-server/src/api/v1/services/users"
 
 	"github.com/gin-gonic/gin"
 )

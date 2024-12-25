@@ -1,7 +1,7 @@
 package routes
 
 import (
-	routes_v1 "menu-server/src/routes/v1"
+	routes_v1 "dine-server/src/routes/v1"
 
 	"github.com/gin-gonic/gin"
 )

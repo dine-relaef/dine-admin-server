@@ -1,7 +1,7 @@
 package models_order
 
 import (
-	models_menu "menu-server/src/models/menu"
+	models_menu "dine-server/src/models/menu"
 	"time"
 
 	"github.com/gofrs/uuid"

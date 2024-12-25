@@ -1,10 +1,10 @@
 package workflow
 
 import (
+	services_orders "dine-server/src/api/v1/services/orders"
+	services_payments "dine-server/src/api/v1/services/payments"
+	services_subscription "dine-server/src/api/v1/services/subscriptions"
 	"log"
-	services_orders "menu-server/src/api/v1/services/orders"
-	services_payments "menu-server/src/api/v1/services/payments"
-	services_subscription "menu-server/src/api/v1/services/subscriptions"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

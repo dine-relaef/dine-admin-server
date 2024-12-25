@@ -2,9 +2,9 @@
 package services_user
 
 import (
-	postgres "menu-server/src/config/database"
-	models_user "menu-server/src/models/users"
-	utils "menu-server/src/utils"
+	postgres "dine-server/src/config/database"
+	models_user "dine-server/src/models/users"
+	utils "dine-server/src/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

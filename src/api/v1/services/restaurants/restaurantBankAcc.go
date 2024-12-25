@@ -7,10 +7,10 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	postgres "menu-server/src/config/database"
-	"menu-server/src/config/env"
-	"menu-server/src/config/payments"
-	models_restaurant "menu-server/src/models/restaurants"
+	postgres "dine-server/src/config/database"
+	"dine-server/src/config/env"
+	"dine-server/src/config/payments"
+	models_restaurant "dine-server/src/models/restaurants"
 
 	"github.com/gin-gonic/gin"
 )

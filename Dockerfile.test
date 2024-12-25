@@ -1,0 +1,32 @@
+FROM golang:1.23.4-alpine
+
+# Install git and swag for documentation and hot reloading
+RUN apk add --no-cache git
+
+ENV GOPROXY=direct
+ENV GOPRIVATE=github.com
+
+# Install swag for generating Swagger documentation
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod and sum files
+COPY go.mod go.sum ./
+
+# Download and tidy dependencies
+RUN go mod download && go mod tidy
+
+# Copy the rest of the application
+COPY ./ ./
+
+# Build the application
+RUN swag init --parseDependency --parseInternal --dir ./src && go build -o ./tmp/main ./src/main.go
+
+# Expose port
+EXPOSE 8080
+
+# Run the application
+ENTRYPOINT ["/app/tmp/main"]
+# CMD ["tail", "-f", "/dev/null"]

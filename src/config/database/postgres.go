@@ -1,17 +1,17 @@
 package postgres
 
 import (
+	"dine-server/src/config/env" // Adjust to the actual path
+	models_common "dine-server/src/models/Common"
+	models_menu "dine-server/src/models/menu"
+	models_order "dine-server/src/models/orders"
+	models_payment "dine-server/src/models/payments"
+	models_plan "dine-server/src/models/plans"
+	models_promoCode "dine-server/src/models/promoCode"
+	models_restaurant "dine-server/src/models/restaurants"
+	models_subscription "dine-server/src/models/subscriptions"
+	models_user "dine-server/src/models/users"
 	"log"
-	"menu-server/src/config/env" // Adjust to the actual path
-	models_common "menu-server/src/models/Common"
-	models_menu "menu-server/src/models/menu"
-	models_order "menu-server/src/models/orders"
-	models_payment "menu-server/src/models/payments"
-	models_plan "menu-server/src/models/plans"
-	models_promoCode "menu-server/src/models/promoCode"
-	models_restaurant "menu-server/src/models/restaurants"
-	models_subscription "menu-server/src/models/subscriptions"
-	models_user "menu-server/src/models/users"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
