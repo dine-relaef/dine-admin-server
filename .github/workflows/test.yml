@@ -1,0 +1,39 @@
+name: Deploy Dine Test Server
+
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  deploy:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+      
+      - name: Copy .env to server
+        run: |
+        echo "${{ secrets.ENV_FILE_TEST }}" > .env
+        scp .env ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:~/app/.env
+
+
+      - name: Copy files to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} "mkdir -p ~/app"
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" . ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:~/app/
+
+      - name: Deploy with Docker Compose
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }} "
+          cd ~/app &&
+          chmod +x run.sh && 
+          ./run.sh test
+          "

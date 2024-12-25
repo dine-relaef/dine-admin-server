@@ -1,5 +1,7 @@
 services:
   dine-test:
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: Dockerfile.test
@@ -10,6 +12,7 @@ services:
     # depends_on:
     #   - postgres
     environment:
+      - SERVER_HOST=${SERVER_HOST}
       - DATABASE_URL=${DATABASE_URL}
       - PORT=${PORT}
       - APP_NAME=${APP_NAME}

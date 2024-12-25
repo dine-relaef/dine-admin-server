@@ -1,6 +1,7 @@
 package env
 
 var AppVar = map[string]string{
+	"SERVER_HOST":          GetEnv("SERVER_HOST"),
 	"APP_NAME":             GetEnv("APP_NAME"),
 	"PORT":                 GetEnv("PORT"),
 	"ENVIRONMENT":          GetEnv("ENVIRONMENT"),

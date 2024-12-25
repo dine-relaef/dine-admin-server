@@ -12,10 +12,10 @@ if [ "$1" == "dev" ]; then
     docker-compose -f docker-compose.dev.yml up --build
 elif [ "$1" == "prod" ]; then
     echo "Starting in production mode..."
-    docker-compose -f docker-compose.prod.yml up --build
+    docker-compose -f docker-compose.prod.yml up -d --build
 elif [ "$1" == "test" ]; then
     echo "Starting in test mode..."
-    docker-compose up --build
+    docker-compose up -d --build
 else
     echo "Invalid argument. Please pass 'dev', 'test', or 'prod' as an argument."
     exit 1

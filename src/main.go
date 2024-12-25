@@ -24,7 +24,7 @@ func main() {
 		docs.SwaggerInfo.Title = "Menu Server"
 		docs.SwaggerInfo.Description = "Menu Server API documentation"
 		docs.SwaggerInfo.Version = "1.0"
-		docs.SwaggerInfo.Host = "localhost:8080"
+		docs.SwaggerInfo.Host = env.AppVar["SERVER_HOST"]
 		docs.SwaggerInfo.Schemes = []string{"http"}
 		docs.SwaggerInfo.BasePath = "/"
 		r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
