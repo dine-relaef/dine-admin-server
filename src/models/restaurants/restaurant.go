@@ -1,10 +1,10 @@
 package models_restaurant
 
 import (
+	models_menu "dine-server/src/models/menu"
+	models_subscription "dine-server/src/models/subscriptions"
 	"encoding/json"
 	"errors"
-	models_menu "menu-server/src/models/menu"
-	models_subscription "menu-server/src/models/subscriptions"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -12,11 +12,11 @@ import (
 
 // Location represents the geographical location of a restaurant.
 type Location struct {
-	Address  string `json:"address"`
-	State    string `json:"state"`
-	City     string `json:"city"`
-	PostCode string `json:"post_code"`
-	StateCode string `json:"state_code"`
+	Address   string  `json:"address"`
+	State     string  `json:"state"`
+	City      string  `json:"city"`
+	PostCode  string  `json:"post_code"`
+	StateCode string  `json:"state_code"`
 	Longitude float64 `json:"longitude"`
 	Latitude  float64 `json:"latitude"`
 }

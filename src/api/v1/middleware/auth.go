@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	postgres "menu-server/src/config/database"
-	models_user "menu-server/src/models/users"
-	"menu-server/src/utils"
+	postgres "dine-server/src/config/database"
+	models_user "dine-server/src/models/users"
+	"dine-server/src/utils"
 	"net/http"
 	"os"
 	"strings"

@@ -3,7 +3,7 @@ package models_user
 import (
 	// uuid "github.com/jackc/pgx/pgtype/ext/gofrs-uuid"
 	// "gorm.io/gorm"
-	models_restaurant "menu-server/src/models/restaurants"
+	models_restaurant "dine-server/src/models/restaurants"
 	"time"
 
 	"github.com/gofrs/uuid"

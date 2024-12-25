@@ -1,12 +1,12 @@
 package services
 
 import (
+	postgres "dine-server/src/config/database"
+	models_common "dine-server/src/models/Common"
+	models_restaurant "dine-server/src/models/restaurants"
+	"dine-server/src/utils"
 	"fmt"
 	"log"
-	postgres "menu-server/src/config/database"
-	models_common "menu-server/src/models/Common"
-	models_restaurant "menu-server/src/models/restaurants"
-	"menu-server/src/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

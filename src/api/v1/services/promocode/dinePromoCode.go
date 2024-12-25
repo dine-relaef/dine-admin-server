@@ -1,8 +1,8 @@
 package services_promocode
 
 import (
-	postgres "menu-server/src/config/database"
-	models_promoCode "menu-server/src/models/promoCode"
+	postgres "dine-server/src/config/database"
+	models_promoCode "dine-server/src/models/promoCode"
 	"net/http"
 	"time"
 

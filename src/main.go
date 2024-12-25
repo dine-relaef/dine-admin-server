@@ -1,31 +1,49 @@
 package main
 
 import (
+	docs "dine-server/docs"
+	postgres "dine-server/src/config/database"
+	"dine-server/src/config/env"
+	"dine-server/src/routes"
 	"log"
-	docs "menu-server/docs"
-	postgres "menu-server/src/config/database"
-	"menu-server/src/config/env"
-	"menu-server/src/routes"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
-	postgres.InitDB()
 
-	r := gin.Default()
-	if env.AppVar["ENVIRONMENT"] == "development" {
+	r := gin.New()
+
+	log.Println("Starting server...")
+	log.Println("Environment: ", env.AppVar["ENVIRONMENT"])
+	log.Println("App Name: ", env.PostgresDatabaseVar["DATABASE_URL"])
+	if env.AppVar["ENVIRONMENT"] != "production" {
 		docs.SwaggerInfo.Title = "Menu Server"
 		docs.SwaggerInfo.Description = "Menu Server API documentation"
 		docs.SwaggerInfo.Version = "1.0"
 		docs.SwaggerInfo.Host = "localhost:8080"
 		docs.SwaggerInfo.Schemes = []string{"http"}
-
 		docs.SwaggerInfo.BasePath = "/"
 		r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	}
+	r.Use(gin.Recovery())
+	if env.AppVar["ENVIRONMENT"] == "development" {
+		r.Use(gin.Logger())
+	}
+
+	postgres.InitDB()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},                                       // Allowed origins
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}, // Allowed methods
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Allowed headers
+		ExposeHeaders:    []string{"Content-Length"},                          // Headers to expose
+		AllowCredentials: true,                                                // Allow credentials like cookies
+		MaxAge:           12 * 60 * 60,                                        // Cache preflight response for 12 hours
+	}))
 
 	setupRoutes(r)
 

@@ -6,8 +6,8 @@ import (
 	"errors"
 	"time"
 
-	"menu-server/src/config/env"
-	models_user "menu-server/src/models/users"
+	"dine-server/src/config/env"
+	models_user "dine-server/src/models/users"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"

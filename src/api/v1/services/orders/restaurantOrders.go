@@ -1,9 +1,9 @@
 package services_orders
 
 import (
-	postgres "menu-server/src/config/database"
-	models_menu "menu-server/src/models/menu"
-	models_order "menu-server/src/models/orders"
+	postgres "dine-server/src/config/database"
+	models_menu "dine-server/src/models/menu"
+	models_order "dine-server/src/models/orders"
 
 	"net/http"
 	"time"

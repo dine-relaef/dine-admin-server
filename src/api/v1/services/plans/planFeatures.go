@@ -1,8 +1,8 @@
 package services_plan
 
 import (
-	postgres "menu-server/src/config/database"
-	models_plan "menu-server/src/models/plans"
+	postgres "dine-server/src/config/database"
+	models_plan "dine-server/src/models/plans"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

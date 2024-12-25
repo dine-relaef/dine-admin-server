@@ -1,8 +1,8 @@
 package models_subscription
 
 import (
-	models_payment "menu-server/src/models/payments"
-	models_plan "menu-server/src/models/plans"
+	models_payment "dine-server/src/models/payments"
+	models_plan "dine-server/src/models/plans"
 	"time"
 
 	uuid "github.com/gofrs/uuid"

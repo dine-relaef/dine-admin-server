@@ -1,8 +1,8 @@
 package routes_v1
 
 import (
-	middleware "menu-server/src/api/v1/middleware"
-	services "menu-server/src/api/v1/services/restaurants"
+	middleware "dine-server/src/api/v1/middleware"
+	services "dine-server/src/api/v1/services/restaurants"
 
 	"github.com/gin-gonic/gin"
 )

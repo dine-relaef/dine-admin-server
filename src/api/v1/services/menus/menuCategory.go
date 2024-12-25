@@ -1,9 +1,9 @@
 package services_menu
 
 import (
-	postgres "menu-server/src/config/database"
-	models_menu "menu-server/src/models/menu"
-	utils "menu-server/src/utils"
+	postgres "dine-server/src/config/database"
+	models_menu "dine-server/src/models/menu"
+	utils "dine-server/src/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

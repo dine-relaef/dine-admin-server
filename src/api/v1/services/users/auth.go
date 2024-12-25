@@ -2,11 +2,11 @@ package services_user
 
 import (
 	"context"
+	postgres "dine-server/src/config/database"
+	"dine-server/src/config/env"
+	models_user "dine-server/src/models/users"
+	utils "dine-server/src/utils"
 	"encoding/json"
-	postgres "menu-server/src/config/database"
-	"menu-server/src/config/env"
-	models_user "menu-server/src/models/users"
-	utils "menu-server/src/utils"
 	"net/http"
 	"net/url"
 	"strings"
