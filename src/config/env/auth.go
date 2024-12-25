@@ -19,10 +19,20 @@ var (
 )
 
 func init() {
+	var redirectURL string
+	if AuthVar["ENVIRONMENT"] == "production" {
+		redirectURL = "https://dine-server.herokuapp.com/api/v1/auth/google/callback"
+
+	} else if AuthVar["ENVIRONMENT"] == "testing" {
+		redirectURL = "https://" + AppVar["SERVER_HOST"] + "/api/v1/auth/google/callback"
+	} else {
+		redirectURL = "http://localhost:8080/api/v1/auth/google/callback"
+	}
+
 	Config = &oauth2.Config{
 		ClientID:     AuthVar["GOOGLE_CLIENT_ID"],
 		ClientSecret: AuthVar["GOOGLE_CLIENT_SECRET"],
-		RedirectURL:  "http://localhost:8080/api/v1/auth/google/callback",
+		RedirectURL:  redirectURL,
 		// Update with your frontend callback URL
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.email",

@@ -25,7 +25,9 @@ func main() {
 		docs.SwaggerInfo.Description = "Dine Server API documentation"
 		docs.SwaggerInfo.Version = "1.0"
 		docs.SwaggerInfo.Host = env.AppVar["SERVER_HOST"]
-		docs.SwaggerInfo.Schemes = []string{"http"}
+		if env.AppVar["ENVIRONMENT"] == "testing" {
+		docs.SwaggerInfo.Schemes = []string{"https"}
+		}
 		docs.SwaggerInfo.BasePath = "/"
 		r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	}
