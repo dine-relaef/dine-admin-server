@@ -18,12 +18,11 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.DEPLOY_KEY }}
-      
+
       - name: Copy .env to server
         run: |
-        echo "${{ secrets.ENV_FILE_TEST }}" > .env
-        scp .env ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:~/app/.env
-
+          echo "${{ secrets.ENV_FILE_TEST }}" > .env
+          scp .env ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_SERVER }}:~/app/.env
 
       - name: Copy files to server
         run: |
