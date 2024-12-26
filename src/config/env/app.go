@@ -9,4 +9,5 @@ var AppVar = map[string]string{
 	"ACCESS_TOKEN_AGE":     GetEnv("ACCESS_TOKEN_AGE"),
 	"REFRESH_TOKEN_SECRET": GetEnv("REFRESH_TOKEN_SECRET"),
 	"REFRESH_TOKEN_AGE":    GetEnv("REFRESH_TOKEN_AGE"),
+	"CLIENT_HOST" :         GetEnv("CLIENT_HOST"),
 }

@@ -3,4 +3,4 @@ tmp/
 ./tmp/build-errors.log
 # Keep environment variables out of version control
 .env
-.env.production
+.env.*

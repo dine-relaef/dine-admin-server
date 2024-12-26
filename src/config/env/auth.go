@@ -20,11 +20,8 @@ var (
 
 func init() {
 	var redirectURL string
-	if AuthVar["ENVIRONMENT"] == "production" {
-		redirectURL = "https://dine-server.herokuapp.com/api/v1/auth/google/callback"
-
-	} else if AuthVar["ENVIRONMENT"] == "testing" {
-		redirectURL = "https://" + AppVar["SERVER_HOST"] + "/api/v1/auth/google/callback"
+	if AppVar["ENVIRONMENT"] != "development" {
+		redirectURL = "https://" + AppVar["CLIENT_HOST"] + "/api/v1/auth/google/callback"
 	} else {
 		redirectURL = "http://localhost:8080/api/v1/auth/google/callback"
 	}

@@ -44,12 +44,20 @@ func CreateDinePayment(c *gin.Context) (gin.H, error) {
 		}, nil
 	}
 	client := payments.RazorpayClient
+
+	var callbackURL string
+	if env.AppVar["ENVIRONMENT"] != "development" {
+		callbackURL = "https://" + env.AppVar["CLIENT_HOST"] + "/api/v1/workflow/plan/payment-subscription"
+	} else {
+		callbackURL = "http://localhost:8080/api/v1/workflow/plan/payment-subscription"
+	}
+
 	params := map[string]interface{}{
 		"amount":          finalAmount * 100, // Amount in smallest currency unit (paise for INR)
 		"currency":        "INR",
 		"reference_id":    orderID,
 		"description":     "Payment for Order " + orderID,
-		"callback_url":    "http://localhost:8080/api/v1/workflow/plan/payment-subscription",
+		"callback_url":    callbackURL,
 		"callback_method": "get",
 	}
 	paymentLink, err := client.PaymentLink.Create(params, nil)
