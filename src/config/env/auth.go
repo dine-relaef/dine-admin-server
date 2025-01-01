@@ -21,9 +21,9 @@ var (
 func init() {
 	var redirectURL string
 	if AppVar["ENVIRONMENT"] != "development" {
-		redirectURL = "https://" + AppVar["CLIENT_HOST"] + "/api/v1/auth/google/callback"
+		redirectURL = "https://" + AppVar["CLIENT_HOST"] + "auth"
 	} else {
-		redirectURL = "http://localhost:8080/api/v1/auth/google/callback"
+		redirectURL = "http://localhost:3000/auth"
 	}
 
 	Config = &oauth2.Config{
