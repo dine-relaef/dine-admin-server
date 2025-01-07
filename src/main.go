@@ -39,13 +39,14 @@ func main() {
 	postgres.InitDB()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},                                       // Allowed origins
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}, // Allowed methods
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Allowed headers
-		ExposeHeaders:    []string{"Content-Length"},                          // Headers to expose
-		AllowCredentials: true,                                                // Allow credentials like cookies
-		MaxAge:           12 * 60 * 60,                                        // Cache preflight response for 12 hours
+    		AllowOrigins:     []string{"http://localhost:3000"}, // Specific origin(s)
+    		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+    		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+    		ExposeHeaders:    []string{"Content-Length"},
+    		AllowCredentials: true, // Required for withCredentials
+    		MaxAge:           12 * 60 * 60,
 	}))
+
 
 	setupRoutes(r)
 
