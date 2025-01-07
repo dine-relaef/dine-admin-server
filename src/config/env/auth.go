@@ -19,10 +19,17 @@ var (
 )
 
 func init() {
+	var redirectURL string
+	if AppVar["ENVIRONMENT"] != "development" {
+		redirectURL = "https://" + AppVar["CLIENT_HOST"] + "auth"
+	} else {
+		redirectURL = "http://localhost:3000/auth"
+	}
+
 	Config = &oauth2.Config{
 		ClientID:     AuthVar["GOOGLE_CLIENT_ID"],
 		ClientSecret: AuthVar["GOOGLE_CLIENT_SECRET"],
-		RedirectURL:  "http://localhost:8080/api/v1/auth/google/callback",
+		RedirectURL:  redirectURL,
 		// Update with your frontend callback URL
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.email",

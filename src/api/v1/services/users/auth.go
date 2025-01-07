@@ -192,6 +192,7 @@ func GoogleLogin(c *gin.Context) {
 // @Produce json
 // @Router /api/v1/auth/google/callback [post]
 func GoogleCallback(c *gin.Context) {
+	// https://test-api.dine.relaef.com/api/v1/auth/google/callback?state=mTL8u611UghMiQAueqaHzw%3D%3D&code=4%2F0AanRRrta-CK0E3r0r_Jo_IcEcT8_Ydbf-XCDBHW5wZnpKiI9xB9iE5yWSQXLs3yJQOdnKA&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=5&prompt=consent
 	// Retrieve the authorization code from query parameters
 	code := c.Query("code")
 	if code == "" {
